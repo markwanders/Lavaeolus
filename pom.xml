@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>Lavaeolus</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Backend API for the Rincewind application</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
