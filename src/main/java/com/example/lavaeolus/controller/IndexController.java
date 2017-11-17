@@ -1,4 +1,4 @@
-package com.example.rincewind.controller;
+package com.example.lavaeolus.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +11,7 @@ public class IndexController {
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     public String index() {
-        return "Hello world";
+        return "Lavaeolus";
     }
 
 }
