@@ -4,7 +4,7 @@ public class APIResponse {
 
     private String accountAddress;
 
-    private long accountBalance;
+    private String accountBalance;
 
     public String getAccountAddress() {
         return accountAddress;
@@ -14,11 +14,11 @@ public class APIResponse {
         this.accountAddress = accountAddress;
     }
 
-    public long getAccountBalance() {
+    public String getAccountBalance() {
         return accountBalance;
     }
 
-    public void setAccountBalance(long accountBalance) {
+    public void setAccountBalance(String accountBalance) {
         this.accountBalance = accountBalance;
     }
 }
