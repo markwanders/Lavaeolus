@@ -36,7 +36,7 @@ public class APIService {
         APIResponse apiResponse = new APIResponse();
 
         BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
-        BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance);
+        BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, BigDecimal.ROUND_HALF_UP);
 
         apiResponse.setAccountBalanceInEther(etherBalance);
         apiResponse.setAccountAddress(address);
