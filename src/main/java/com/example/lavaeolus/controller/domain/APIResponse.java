@@ -1,10 +1,14 @@
 package com.example.lavaeolus.controller.domain;
 
+import java.math.BigDecimal;
+
 public class APIResponse {
 
     private String accountAddress;
 
-    private String accountBalance;
+    private BigDecimal accountBalanceInEther;
+
+    private BigDecimal accountBalanceInEuros;
 
     public String getAccountAddress() {
         return accountAddress;
@@ -14,11 +18,19 @@ public class APIResponse {
         this.accountAddress = accountAddress;
     }
 
-    public String getAccountBalance() {
-        return accountBalance;
+    public BigDecimal getAccountBalanceInEther() {
+        return accountBalanceInEther;
     }
 
-    public void setAccountBalance(String accountBalance) {
-        this.accountBalance = accountBalance;
+    public void setAccountBalanceInEther(BigDecimal accountBalance) {
+        this.accountBalanceInEther = accountBalance;
+    }
+
+    public BigDecimal getAccountBalanceInEuros() {
+        return accountBalanceInEuros;
+    }
+
+    public void setAccountBalanceInEuros(BigDecimal accountBalanceInEuros) {
+        this.accountBalanceInEuros = accountBalanceInEuros;
     }
 }
