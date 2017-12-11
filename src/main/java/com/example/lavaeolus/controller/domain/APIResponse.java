@@ -1,5 +1,7 @@
 package com.example.lavaeolus.controller.domain;
 
+import com.example.lavaeolus.dao.domain.BunqResponse;
+
 import java.math.BigDecimal;
 
 public class APIResponse {
@@ -9,6 +11,8 @@ public class APIResponse {
     private BigDecimal accountBalanceInEther;
 
     private BigDecimal accountBalanceInEuros;
+
+    private BunqResponse bunqResponse;
 
     public String getAccountAddress() {
         return accountAddress;
@@ -32,5 +36,13 @@ public class APIResponse {
 
     public void setAccountBalanceInEuros(BigDecimal accountBalanceInEuros) {
         this.accountBalanceInEuros = accountBalanceInEuros;
+    }
+
+    public BunqResponse getBunqResponse() {
+        return bunqResponse;
+    }
+
+    public void setBunqResponse(BunqResponse bunqResponse) {
+        this.bunqResponse = bunqResponse;
     }
 }
