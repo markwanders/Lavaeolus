@@ -1,6 +1,6 @@
 package com.example.lavaeolus.service;
 
-import com.example.lavaeolus.controller.domain.EthereumResponse;
+import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.dao.CryptoCompareClient;
 import com.example.lavaeolus.dao.EtherScanClient;
 import com.example.lavaeolus.dao.domain.CryptoCompareReply;
@@ -26,22 +26,34 @@ public class EthereumService {
     @Autowired
     private Environment env;
 
-    public EthereumResponse createAPIResponse() {
+    public Account getAccount() {
         String address = env.getProperty("etherscan.address");
 
         EtherScanReply etherScanReply = etherScanClient.getBalance(address);
 
         CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
 
-        EthereumResponse ethereumResponse = new EthereumResponse();
+        Account account = new Account("Ethereum");
 
         BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
         BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
 
-        ethereumResponse.setAccountBalanceInEther(etherBalance);
-        ethereumResponse.setAccountAddress(address);
-        ethereumResponse.setAccountBalanceInEuros(euroBalance);
+        Account.Identifier identifier = new Account.Identifier();
+        identifier.setName("Address");
+        identifier.setValue(address);
+        account.addIdentifier(identifier);
 
-        return ethereumResponse;
+        Account.Balance balanceInEuro = new Account.Balance();
+        balanceInEuro.setAmount(euroBalance);
+        balanceInEuro.setCurrency("EUR");
+
+        Account.Balance balanceInEther = new Account.Balance();
+        balanceInEther.setAmount(etherBalance);
+        balanceInEther.setCurrency("ether");
+
+        account.addBalance(balanceInEther);
+        account.addBalance(balanceInEuro);
+
+        return account;
     }
 }
