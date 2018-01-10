@@ -1,7 +1,9 @@
 package com.example.lavaeolus.controller;
 
+import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.dao.BunqClient;
-import com.example.lavaeolus.dao.domain.BunqResponse;
+import com.example.lavaeolus.dao.domain.BunqReply;
+import com.example.lavaeolus.service.BunqService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +22,15 @@ public class BunqController {
     private static final Logger LOG = LoggerFactory.getLogger(BunqController.class);
 
     @Autowired
-    private BunqClient bunqClient;
+    private BunqService bunqService;
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity getBalance() throws IOException {
-        LOG.info("Received request on getBalance endpoint");
+    public ResponseEntity getAccount() throws IOException {
+        LOG.info("Received request on Bunq endpoint");
 
-        BunqResponse bunqResponse = bunqClient.fetchAccount();
+        Account account = bunqService.getAccount();
 
-        return new ResponseEntity(bunqResponse, HttpStatus.OK);
+        return new ResponseEntity(account, HttpStatus.OK);
     }
 
 }

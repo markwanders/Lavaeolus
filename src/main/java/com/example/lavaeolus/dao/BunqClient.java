@@ -5,7 +5,7 @@ import com.bunq.sdk.model.generated.endpoint.MonetaryAccount;
 import com.bunq.sdk.model.generated.endpoint.User;
 import com.bunq.sdk.model.generated.endpoint.UserPerson;
 import com.bunq.sdk.model.generated.object.Pointer;
-import com.example.lavaeolus.dao.domain.BunqResponse;
+import com.example.lavaeolus.dao.domain.BunqReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ public class BunqClient {
     @Autowired
     private ApiContext apiContext;
 
-    public BunqResponse fetchAccount() {
-        BunqResponse bunqResponse = new BunqResponse();
+    public BunqReply fetchAccount() {
+        BunqReply bunqReply = new BunqReply();
 
         //First fetch users in current context
         List<User> users = User.list(apiContext).getValue();
@@ -39,20 +39,20 @@ public class BunqClient {
                 //Only interested in first account
                 if(monetaryAccounts.size() > 0) {
                     MonetaryAccount monetaryAccount = monetaryAccounts.get(0);
-                    bunqResponse.setBalance(monetaryAccount.getMonetaryAccountBank().getBalance().getValue());
-                    bunqResponse.setCurrency(monetaryAccount.getMonetaryAccountBank().getBalance().getCurrency());
+                    bunqReply.setBalance(monetaryAccount.getMonetaryAccountBank().getBalance().getValue());
+                    bunqReply.setCurrency(monetaryAccount.getMonetaryAccountBank().getBalance().getCurrency());
                     List<Pointer> pointers = monetaryAccount.getMonetaryAccountBank().getAlias();
                     for (Pointer alias : pointers) {
                         if("IBAN".equals(alias.getType())) {
-                            bunqResponse.setIBAN(alias.getValue());
-                            bunqResponse.setName(alias.getName());
+                            bunqReply.setIBAN(alias.getValue());
+                            bunqReply.setName(alias.getName());
                         }
                     }
                 }
             }
         }
 
-        return bunqResponse;
+        return bunqReply;
 
     }
 }
