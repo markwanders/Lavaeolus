@@ -2,11 +2,13 @@ package com.example.lavaeolus.service;
 
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.dao.BunqClient;
-import com.example.lavaeolus.dao.domain.BunqReply;
+import com.example.lavaeolus.dao.domain.BunqAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BunqService {
@@ -16,27 +18,32 @@ public class BunqService {
     @Autowired
     private BunqClient bunqClient;
 
+    public List<Account> getAccounts() {
+        List<Account> accounts = new ArrayList<>();
 
-    public Account getAccount() {
-        BunqReply bunqReply = bunqClient.fetchAccount();
+        List<BunqAccount> bunqAccounts = bunqClient.fetchAccounts();
 
-        Account account = new Account("Bunq");
+        for(BunqAccount bunqAccount : bunqAccounts) {
+            Account account = new Account("Bunq");
 
-        Account.Identifier IBANIdentifier = new Account.Identifier();
-        IBANIdentifier.setName("IBAN");
-        IBANIdentifier.setValue(bunqReply.getIBAN());
-        account.addIdentifier(IBANIdentifier);
+            Account.Identifier IBANIdentifier = new Account.Identifier();
+            IBANIdentifier.setName("IBAN");
+            IBANIdentifier.setValue(bunqAccount.getIBAN());
+            account.addIdentifier(IBANIdentifier);
 
-        Account.Identifier nameIdentifier = new Account.Identifier();
-        nameIdentifier.setName("Name");
-        nameIdentifier.setValue(bunqReply.getName());
-        account.addIdentifier(nameIdentifier);
+            Account.Identifier nameIdentifier = new Account.Identifier();
+            nameIdentifier.setName("Name");
+            nameIdentifier.setValue(bunqAccount.getName());
+            account.addIdentifier(nameIdentifier);
 
-        Account.Balance balance = new Account.Balance();
-        balance.setAmount(new BigDecimal(bunqReply.getBalance()));
-        balance.setCurrency(bunqReply.getCurrency());
-        account.addBalance(balance);
+            Account.Balance balance = new Account.Balance();
+            balance.setAmount(new BigDecimal(bunqAccount.getBalance()));
+            balance.setCurrency(bunqAccount.getCurrency());
+            account.addBalance(balance);
 
-        return account;
+            accounts.add(account);
+        }
+
+        return accounts;
     }
 }

@@ -5,12 +5,13 @@ import com.bunq.sdk.model.generated.endpoint.MonetaryAccount;
 import com.bunq.sdk.model.generated.endpoint.User;
 import com.bunq.sdk.model.generated.endpoint.UserPerson;
 import com.bunq.sdk.model.generated.object.Pointer;
-import com.example.lavaeolus.dao.domain.BunqReply;
+import com.example.lavaeolus.dao.domain.BunqAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -20,8 +21,8 @@ public class BunqClient {
     @Autowired
     private ApiContext apiContext;
 
-    public BunqReply fetchAccount() {
-        BunqReply bunqReply = new BunqReply();
+    public List<BunqAccount> fetchAccounts() {
+        List<BunqAccount> bunqAccounts = new ArrayList<>();
 
         //First fetch users in current context
         List<User> users = User.list(apiContext).getValue();
@@ -36,23 +37,22 @@ public class BunqClient {
                         userPerson.getId()
                 ).getValue();
                 LOG.info("Received accounts from Bunq: {}", monetaryAccounts);
-                //Only interested in first account
-                if(monetaryAccounts.size() > 0) {
-                    MonetaryAccount monetaryAccount = monetaryAccounts.get(0);
-                    bunqReply.setBalance(monetaryAccount.getMonetaryAccountBank().getBalance().getValue());
-                    bunqReply.setCurrency(monetaryAccount.getMonetaryAccountBank().getBalance().getCurrency());
+                for(MonetaryAccount monetaryAccount : monetaryAccounts){
+                    BunqAccount bunqAccount = new BunqAccount();
+                    bunqAccount.setBalance(monetaryAccount.getMonetaryAccountBank().getBalance().getValue());
+                    bunqAccount.setCurrency(monetaryAccount.getMonetaryAccountBank().getBalance().getCurrency());
                     List<Pointer> pointers = monetaryAccount.getMonetaryAccountBank().getAlias();
                     for (Pointer alias : pointers) {
                         if("IBAN".equals(alias.getType())) {
-                            bunqReply.setIBAN(alias.getValue());
-                            bunqReply.setName(alias.getName());
+                            bunqAccount.setIBAN(alias.getValue());
+                            bunqAccount.setName(alias.getName());
                         }
                     }
+                    bunqAccounts.add(bunqAccount);
                 }
             }
         }
 
-        return bunqReply;
-
+        return bunqAccounts;
     }
 }

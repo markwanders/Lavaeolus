@@ -33,8 +33,8 @@ public class AccountsController {
         LOG.info("Received request on getAccounts endpoint");
 
         List<Account> accounts = new ArrayList<>();
-        accounts.add(ethereumService.getAccount());
-        accounts.add(bunqService.getAccount());
+        accounts.addAll(ethereumService.getAccounts());
+        accounts.addAll(bunqService.getAccounts());
 
         return new ResponseEntity(accounts, HttpStatus.OK);
     }

@@ -6,11 +6,13 @@ import com.example.lavaeolus.dao.EtherScanClient;
 import com.example.lavaeolus.dao.domain.CryptoCompareReply;
 import com.example.lavaeolus.dao.domain.EtherScanReply;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EthereumService {
@@ -23,37 +25,41 @@ public class EthereumService {
     @Autowired
     private CryptoCompareClient cryptoCompareClient;
 
-    @Autowired
-    private Environment env;
+    @Value("${etherscan.address}")
+    private String[] addresses;
 
-    public Account getAccount() {
-        String address = env.getProperty("etherscan.address");
-
-        EtherScanReply etherScanReply = etherScanClient.getBalance(address);
+    public List<Account> getAccounts() {
+        List<Account> accounts = new ArrayList<>();
 
         CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
 
-        Account account = new Account("Ethereum");
+        for(String address : addresses) {
+            EtherScanReply etherScanReply = etherScanClient.getBalance(address);
 
-        BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
-        BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
+            Account account = new Account("Ethereum");
 
-        Account.Identifier identifier = new Account.Identifier();
-        identifier.setName("Address");
-        identifier.setValue(address);
-        account.addIdentifier(identifier);
+            BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
+            BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
 
-        Account.Balance balanceInEuro = new Account.Balance();
-        balanceInEuro.setAmount(euroBalance);
-        balanceInEuro.setCurrency("EUR");
+            Account.Identifier identifier = new Account.Identifier();
+            identifier.setName("Address");
+            identifier.setValue(address);
+            account.addIdentifier(identifier);
 
-        Account.Balance balanceInEther = new Account.Balance();
-        balanceInEther.setAmount(etherBalance);
-        balanceInEther.setCurrency("ether");
+            Account.Balance balanceInEuro = new Account.Balance();
+            balanceInEuro.setAmount(euroBalance);
+            balanceInEuro.setCurrency("EUR");
 
-        account.addBalance(balanceInEther);
-        account.addBalance(balanceInEuro);
+            Account.Balance balanceInEther = new Account.Balance();
+            balanceInEther.setAmount(etherBalance);
+            balanceInEther.setCurrency("ether");
 
-        return account;
+            account.addBalance(balanceInEther);
+            account.addBalance(balanceInEuro);
+
+            accounts.add(account);
+        }
+
+        return accounts;
     }
 }

@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
-@RequestMapping("/api/ethereum")
+@RequestMapping("/api/accounts/ethereum")
 @RestController
 public class EthereumController {
     private static final Logger LOG = LoggerFactory.getLogger(EthereumController.class);
@@ -23,12 +24,12 @@ public class EthereumController {
     private EthereumService ethereumService;
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity getAccount() throws IOException {
+    public ResponseEntity getAccounts() throws IOException {
         LOG.info("Received request on Ethereum endpoint");
 
-        Account account = ethereumService.getAccount();
+        List<Account> accounts = ethereumService.getAccounts();
 
-        return new ResponseEntity(account, HttpStatus.OK);
+        return new ResponseEntity(accounts, HttpStatus.OK);
     }
 
 }

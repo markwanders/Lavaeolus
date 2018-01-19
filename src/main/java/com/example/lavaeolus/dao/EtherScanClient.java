@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -22,11 +21,10 @@ public class EtherScanClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private Environment env;
+    @Value("${etherscan.api-key}")
+    private String apiKey;
 
     public EtherScanReply getBalance(String address) {
-        String apiKey = env.getProperty("etherscan.api-key");
         String requestURL = ETHERSCAN_URL + "?module=account&action=balance&tag=latest&address=" + address + "&apikey=" + apiKey;
 
         LOG.info("Sending request to {}", requestURL);

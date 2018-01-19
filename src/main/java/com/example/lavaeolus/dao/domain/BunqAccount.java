@@ -3,7 +3,7 @@ package com.example.lavaeolus.dao.domain;
 import lombok.Data;
 
 @Data
-public class BunqReply {
+public class BunqAccount {
     private String balance;
 
     private String currency;
