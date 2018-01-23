@@ -29,7 +29,7 @@ public class BunqController {
 
         List<Account> accounts = bunqService.getAccounts();
 
-        return new ResponseEntity(accounts, HttpStatus.OK);
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
 }

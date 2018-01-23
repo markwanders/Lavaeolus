@@ -8,13 +8,13 @@ import java.util.List;
 
 @Data
 public class Account {
-    private String type;
+    private AccountType type;
 
     private List<Identifier> identifiers;
 
     private List<Balance> balances;
 
-    public Account(String type) {
+    public Account(AccountType type) {
         this.type = type;
     }
 
@@ -41,6 +41,15 @@ public class Account {
         }
     }
 
+    public void addIdentifiers(List<Identifier> identifiers) {
+        if(this.identifiers == null ) {
+            this.identifiers = new ArrayList<>();
+            this.identifiers.addAll(identifiers);
+        } else {
+            this.identifiers.addAll(identifiers);
+        }
+    }
+
     public void addBalance(Balance balance) {
         if(this.balances == null) {
             this.balances = new ArrayList<>();
@@ -48,5 +57,10 @@ public class Account {
         } else {
             this.balances.add(balance);
         }
+    }
+
+    public enum AccountType {
+        BUNQ, ETHEREUM
+
     }
 }
