@@ -14,4 +14,6 @@ public class Transaction {
     private String currency;
 
     private LocalDateTime dateTime;
+
+    private String description;
 }
