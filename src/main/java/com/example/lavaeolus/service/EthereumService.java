@@ -1,6 +1,7 @@
 package com.example.lavaeolus.service;
 
 import com.example.lavaeolus.controller.domain.Account;
+import com.example.lavaeolus.controller.domain.Transaction;
 import com.example.lavaeolus.dao.CryptoCompareClient;
 import com.example.lavaeolus.dao.EtherScanClient;
 import com.example.lavaeolus.dao.domain.CryptoCompareReply;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EthereumService {
+public class EthereumService implements AccountService {
 
     private static final BigDecimal weiToEtherRatio = new BigDecimal("1000000000000000000");
 
@@ -36,7 +37,7 @@ public class EthereumService {
         for(String address : addresses) {
             EtherScanReply etherScanReply = etherScanClient.getBalance(address);
 
-            Account account = new Account("Ethereum");
+            Account account = new Account(Account.AccountType.ETHEREUM);
 
             BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
             BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
@@ -61,5 +62,10 @@ public class EthereumService {
         }
 
         return accounts;
+    }
+
+    @Override
+    public List<Transaction> getTransactions(String accountIdentifier) {
+        return null;
     }
 }
