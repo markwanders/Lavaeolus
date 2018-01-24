@@ -31,7 +31,7 @@ public class EthereumController {
 
         List<Account> accounts = ethereumService.getAccounts();
 
-        return new ResponseEntity(accounts, HttpStatus.OK);
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
 }

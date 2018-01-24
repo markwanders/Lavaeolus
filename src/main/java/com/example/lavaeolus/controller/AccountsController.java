@@ -47,6 +47,7 @@ public class AccountsController {
     }
 
     @RequestMapping(value="/transactions/{type}/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity getTransactions(@PathVariable("type") final String type, @PathVariable("id") final String id) throws IOException {
         LOG.info("Received request on getTransactions endpoint");
 
