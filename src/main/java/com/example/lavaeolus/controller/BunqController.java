@@ -37,7 +37,7 @@ public class BunqController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/transactions/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value="/{id}/transactions", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity getTransactions(@PathVariable("id") final String id) throws IOException {
         LOG.info("Received request on Bunq transactions endpoint");

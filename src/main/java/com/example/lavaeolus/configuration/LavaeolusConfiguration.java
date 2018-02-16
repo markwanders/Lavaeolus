@@ -17,9 +17,7 @@ import java.io.File;
 public class LavaeolusConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(LavaeolusConfiguration.class);
 
-    private static final String DEVICE_DESCRIPTION = "Lavaeolus.";
-    private static final String API_CONTEXT_FILE_PATH = "bunq.conf-location";
-    private static final String API_ENVIRONMENT = "bunq.environment";
+    private static final String DEVICE_DESCRIPTION = "Lavaeolus";
 
     protected static Gson gson = BunqGsonBuilder.buildDefault().create();
 
