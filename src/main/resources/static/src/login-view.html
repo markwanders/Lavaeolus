@@ -22,17 +22,19 @@
         <div class="card">
             <h1>Log in</h1>
             <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-            <form is="iron-form" id="form" method="post" action="/login">
-                <paper-input value={{username}} label="Username" name="username" required
-                             autofocus></paper-input>
-                <paper-input value="{{password}}" label="Password" name="password"
-                             type="password" required></paper-input>
-                <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
-                <div class="wrapper-btns">
-                    <paper-button id="login-button" class="primary" on-tap="_logIn" raised>Login</paper-button>
-                    <paper-button on-tap="_register">Sign Up</paper-button>
-                </div>
-            </form>
+            <iron-form id="form">
+                <form method="post" action="/login">
+                    <paper-input value={{username}} label="Username" name="username" required
+                                 autofocus></paper-input>
+                    <paper-input value="{{password}}" label="Password" name="password"
+                                 type="password" required></paper-input>
+                    <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
+                    <div class="wrapper-btns">
+                        <paper-button id="login-button" class="primary" on-tap="_logIn" raised>Login</paper-button>
+                        <paper-button on-tap="_register">Sign Up</paper-button>
+                    </div>
+                </form>
+            </iron-form>
         </div>
     </template>
     <script>
