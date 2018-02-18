@@ -22,12 +22,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="my-icons.html">
 
-<link rel="lazy-import" href="my-view1.html">
-<link rel="lazy-import" href="my-view2.html">
-<link rel="lazy-import" href="my-view3.html">
-<link rel="lazy-import" href="my-view404.html">
+<link rel="lazy-import" href="user-view.html">
+<link rel="lazy-import" href="error-view.html">
 
-<dom-module id="my-app">
+<dom-module id="lavaeolus-app">
   <template>
     <style>
       :host {
@@ -82,14 +80,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <app-drawer-layout fullbleed narrow="{{narrow}}">
       <!-- Drawer content -->
-      <!--<app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">-->
-        <!--<app-toolbar>Menu</app-toolbar>-->
-        <!--<iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">-->
-          <!--<a name="view1" href="[[rootPath]]view1">View One</a>-->
-          <!--<a name="view2" href="[[rootPath]]view2">View Two</a>-->
-          <!--<a name="view3" href="[[rootPath]]view3">View Three</a>-->
-        <!--</iron-selector>-->
-      <!--</app-drawer>-->
+      <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="user" href="[[rootPath]]user">User</a>
+        </iron-selector>
+      </app-drawer>
 
       <!-- Main content -->
       <app-header-layout has-scrolling-region>
@@ -104,20 +100,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
-            fallback-selection="view404"
+            fallback-selection="error"
             role="main">
-          <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-          <my-view404 name="view404"></my-view404>
+          <user-view name="user"></user-view>
+          <error-view name="error"></error-view>
         </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
   </template>
 
   <script>
-    class MyApp extends Polymer.Element {
-      static get is() { return 'my-app'; }
+    class LavaeolusApp extends Polymer.Element {
+      static get is() { return 'lavaeolus-app'; }
 
       static get properties() {
         return {
@@ -142,8 +136,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
-        // Default to 'view1' in that case.
-        this.page = page || 'view1';
+        // Default to 'user' in that case.
+        this.page = page || 'user';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
@@ -153,7 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
+        var resolvedPageUrl = this.resolveUrl(page + '-view.html');
         Polymer.importHref(
             resolvedPageUrl,
             null,
@@ -162,10 +156,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       _showPage404() {
-        this.page = 'view404';
+        this.page = 'error-view';
       }
     }
 
-    window.customElements.define(MyApp.is, MyApp);
+    window.customElements.define(LavaeolusApp.is, LavaeolusApp);
   </script>
 </dom-module>
