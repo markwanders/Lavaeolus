@@ -24,6 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="lazy-import" href="user-view.html">
 <link rel="lazy-import" href="error-view.html">
+<link rel="lazy-import" href="login-view.html">
 
 <dom-module id="lavaeolus-app">
   <template>
@@ -102,6 +103,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="error"
             role="main">
+          <login-view name="login"></login-view>
           <user-view name="user"></user-view>
           <error-view name="error"></error-view>
         </iron-pages>
@@ -137,7 +139,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
         // Default to 'user' in that case.
-        this.page = page || 'user';
+        this.page = page || 'login';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
