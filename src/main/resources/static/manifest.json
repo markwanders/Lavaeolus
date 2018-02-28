@@ -1,7 +1,7 @@
 {
-  "name": "My App",
-  "short_name": "My App",
-  "description": "My App description",
+  "name": "Lavaeolus",
+  "short_name": "Lavaeolus",
+  "description": "Lavaeolus description",
   "icons": [
     {
       "src": "images/manifest/icon-192x192.png",

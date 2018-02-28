@@ -6,7 +6,7 @@
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="shared-styles.html">
 
-<dom-module id="login-view">
+<dom-module id="login-page">
     <template>
         <style include="shared-styles">
       :host {
@@ -39,7 +39,7 @@
     </template>
     <script>
     Polymer({
-      is: 'login-view',
+      is: 'login-page',
 
       behaviors: [Polymer.NeonAnimatableBehavior],
 
@@ -69,7 +69,8 @@
       },
 
       _handleLoginSuccess: function(evt) {
-        this.token = evt.detail.xhr.getResponseHeader('x-auth-token');
+        //this.token = evt.detail.xhr.getResponseHeader('x-auth-token');
+        this.token = 'foo';
       },
 
       _handleLoginError: function() {

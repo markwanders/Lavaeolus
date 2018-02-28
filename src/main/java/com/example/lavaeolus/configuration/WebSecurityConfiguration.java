@@ -31,6 +31,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anonymous().and()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/manifest.json").permitAll()
                 .antMatchers("/service-worker.js").permitAll()
                 .antMatchers("/bower_components/**").permitAll()
                 .antMatchers("/images/**").permitAll()

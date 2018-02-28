@@ -1,5 +1,7 @@
 package com.example.lavaeolus.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
+    private static final Logger LOG = LoggerFactory.getLogger(LoginFilter.class);
+
     public LoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager) {
         super(new AntPathRequestMatcher(defaultFilterProcessesUrl));
         setAuthenticationManager(authenticationManager);
@@ -22,6 +26,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
+        LOG.info("Attempting authentication: {}", httpServletRequest.getParameter("username"));
         return getAuthenticationManager()
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         httpServletRequest.getParameter("username"), httpServletRequest.getParameter("password")));
@@ -30,7 +35,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authentication) throws IOException, ServletException {
-
+        LOG.info("Successful authentication: {}", authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
