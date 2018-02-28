@@ -1,7 +1,8 @@
 package com.example.lavaeolus.configuration;
 
-import com.example.lavaeolus.security.AuthenticationFilter;
 import com.example.lavaeolus.security.LoginFilter;
+import com.example.lavaeolus.security.TokenAuthenticationFilter;
+import com.example.lavaeolus.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,7 +22,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    private AuthenticationFilter authenticationFilter;
+    private TokenAuthenticationService tokenAuthenticationService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,8 +39,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/src/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new LoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new LoginFilter("/login", authenticationManager(), tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired

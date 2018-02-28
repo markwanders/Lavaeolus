@@ -19,9 +19,12 @@ import java.io.IOException;
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     private static final Logger LOG = LoggerFactory.getLogger(LoginFilter.class);
 
-    public LoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager) {
+    private TokenAuthenticationService tokenAuthenticationService;
+
+    public LoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, TokenAuthenticationService tokenAuthenticationService) {
         super(new AntPathRequestMatcher(defaultFilterProcessesUrl));
         setAuthenticationManager(authenticationManager);
+        this.tokenAuthenticationService = tokenAuthenticationService;
     }
 
     @Override
@@ -36,6 +39,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authentication) throws IOException, ServletException {
         LOG.info("Successful authentication: {}", authentication);
+        tokenAuthenticationService.addAuthentication(response, authentication.getPrincipal().toString());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
