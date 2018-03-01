@@ -1,5 +1,7 @@
 package com.example.lavaeolus.security;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.Date;
 
 @Service
@@ -20,7 +23,7 @@ public class TokenAuthenticationService {
     @Value("${lavaeolus.token.secret}")
     private String secret;
 
-    public void addAuthentication(HttpServletResponse response, String tokenUser) {
+    public void addAuthentication(HttpServletResponse response, TokenUser tokenUser) {
         String token = createTokenForUser(tokenUser);
         response.addHeader(AUTH_HEADER_NAME, token);
     }
@@ -28,7 +31,7 @@ public class TokenAuthenticationService {
     public Authentication getAuthentication(HttpServletRequest request) {
         final String token = request.getHeader(AUTH_HEADER_NAME);
         if (token != null && !token.isEmpty()) {
-            final String user = parseUserFromToken(token);
+            final TokenUser user = parseUserFromToken(token);
             if (user != null) {
                 return new UserAuthentication(user);
             }
@@ -36,20 +39,36 @@ public class TokenAuthenticationService {
         return null;
     }
 
-    private String parseUserFromToken(String token) {
+    private TokenUser parseUserFromToken(String token) {
         String userJSON = Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-        return userJSON;
+        return fromJSON(userJSON);
     }
 
-    private String createTokenForUser(String user) {
+    private String createTokenForUser(TokenUser user) {
         return Jwts.builder()
                 .setExpiration(new Date(System.currentTimeMillis() + VALIDITY_TIME_MS))
-                .setSubject(user)
+                .setSubject(toJSON(user))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    private TokenUser fromJSON(final String userJSON) {
+        try {
+            return new ObjectMapper().readValue(userJSON, TokenUser.class);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private String toJSON(TokenUser user) {
+        try {
+            return new ObjectMapper().writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

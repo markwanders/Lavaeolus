@@ -3,43 +3,42 @@ package com.example.lavaeolus.security;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
 
 public class UserAuthentication implements Authentication {
-    private final String user;
+    private final TokenUser user;
     private boolean authenticated = true;
 
-    public UserAuthentication(String user) {
+    public UserAuthentication(TokenUser user) {
         this.user = user;
     }
 
     @Override
     public String getName() {
-        return user;
+        return user.getUsername();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(this.user));
+        return Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()));
     }
 
     @Override
     public String getCredentials() {
-        return user;
+        return user.getPassword();
     }
 
     @Override
-    public String getDetails() {
+    public Object getDetails() {
         return user;
     }
 
     @Override
     public String getPrincipal() {
-        return user;
+        return user.getUsername();
     }
 
     @Override

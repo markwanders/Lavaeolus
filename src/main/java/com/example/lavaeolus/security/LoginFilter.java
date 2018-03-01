@@ -39,7 +39,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authentication) throws IOException, ServletException {
         LOG.info("Successful authentication: {}", authentication);
-        tokenAuthenticationService.addAuthentication(response, authentication.getPrincipal().toString());
+        tokenAuthenticationService.addAuthentication(response, (TokenUser) authentication.getPrincipal());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

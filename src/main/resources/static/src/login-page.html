@@ -10,16 +10,33 @@
     <template>
         <style include="shared-styles">
       :host {
-        display: block;
-
-        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: var(--dark-primary-color);
       }
       .wrapper-btns {
         margin-top: 15px;
       }
+      .login {
+        background: #fff;
+        box-sizing: border-box;
+        padding: 20px;
+        width: 400px;
+      }
+      @media (max-width: 600px){
+        :host {
+          justify-content: flex-end;
+        }
+        .login {
+          width: 100vw;
+          height: 50vh;
+        }
+      }
     </style>
 
-        <div class="card">
+        <paper-material class="login" elevation="3">
             <h1>Log in</h1>
             <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
             <iron-form id="form">
@@ -35,7 +52,7 @@
                     </div>
                 </form>
             </iron-form>
-        </div>
+        </paper-material>
     </template>
     <script>
     Polymer({
