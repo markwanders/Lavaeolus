@@ -102,7 +102,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             attr-for-selected="name"
             fallback-selection="error"
             role="main">
-          <user-view name="user"></user-view>
+          <user-view name="user" token="{{token}}"></user-view>
           <error-view name="error"></error-view>
         </iron-pages>
       </app-header-layout>
@@ -119,6 +119,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: String,
             reflectToAttribute: true,
             observer: '_pageChanged',
+          },
+          token: {
+            type: String,
+            notify: true
           },
           routeData: Object,
           subroute: String,

@@ -9,11 +9,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="user-view">
-  <template>
-    <style include="shared-styles">
+    <template>
+        <style include="shared-styles">
       :host {
         display: block;
 
@@ -21,17 +23,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <div class="card">
-      <div class="circle">1</div>
-      <h1>User view</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
-    </div>
-  </template>
+        <div class="card">
+            <div class="circle">{{user.id}}</div>
+            <h1>{{user.username}}</h1>
+            <p>Role: {{user.role}}</p>
+            <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+        </div>
+        <iron-ajax
+                id="user"
+                headers={{headers}}
+                url="/api/user"
+                method="GET"
+                content-type="application/json"
+                handle-as="json"
+                last-response="{{user}}">
+        </iron-ajax>
+    </template>
 
-  <script>
+    <script>
     class UserView extends Polymer.Element {
-      static get is() { return 'user-view'; }
+        static get is() { return 'user-view'; }
+
+        static get properties() {
+            return {
+                user: Object,
+                token: {
+                    type: String,
+                    notify: true,
+                    observer: '_tokenUpdated'
+                },
+                headers: {
+                    type: Object,
+                    computed: '_getHeader(token)'
+                }
+            }
+        }
+
+        go() {
+            this.$.user.generateRequest();
+        }
+
+        _tokenUpdated(){
+            if(this.token){
+                this.go();
+            }
+        }
+
+        _getHeader(token) {
+            return {'x-auth-token': token};
+        }
     }
 
     window.customElements.define(UserView.is, UserView);

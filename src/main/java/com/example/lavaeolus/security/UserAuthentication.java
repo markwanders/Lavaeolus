@@ -32,7 +32,7 @@ public class UserAuthentication implements Authentication {
     }
 
     @Override
-    public Object getDetails() {
+    public TokenUser getDetails() {
         return user;
     }
 

@@ -1,5 +1,6 @@
 package com.example.lavaeolus.security;
 
+import com.example.lavaeolus.dao.domain.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -45,7 +46,7 @@ public class TokenAuthenticationService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-        return fromJSON(userJSON);
+        return new TokenUser(fromJSON(userJSON));
     }
 
     private String createTokenForUser(TokenUser user) {
@@ -56,9 +57,9 @@ public class TokenAuthenticationService {
                 .compact();
     }
 
-    private TokenUser fromJSON(final String userJSON) {
+    private User fromJSON(final String userJSON) {
         try {
-            return new ObjectMapper().readValue(userJSON, TokenUser.class);
+            return new ObjectMapper().readValue(userJSON, User.class);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
