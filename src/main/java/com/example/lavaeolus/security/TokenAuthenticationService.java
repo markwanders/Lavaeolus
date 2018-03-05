@@ -33,9 +33,7 @@ public class TokenAuthenticationService {
         final String token = request.getHeader(AUTH_HEADER_NAME);
         if (token != null && !token.isEmpty()) {
             final TokenUser user = parseUserFromToken(token);
-            if (user != null) {
-                return new UserAuthentication(user);
-            }
+            return new UserAuthentication(user);
         }
         return null;
     }
