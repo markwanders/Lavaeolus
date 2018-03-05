@@ -23,11 +23,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="my-icons.html">
 
 <link rel="lazy-import" href="user-view.html">
+<link rel="lazy-import" href="accounts-view.html">
 <link rel="lazy-import" href="error-view.html">
 
 <dom-module id="lavaeolus-page">
-  <template>
-    <style>
+    <template>
+        <style>
       :host {
         --app-primary-color: #4285f4;
         --app-secondary-color: black;
@@ -66,50 +67,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
 
-    <app-location
-        route="{{route}}"
-        url-space-regex="^[[rootPath]]">
-    </app-location>
+        <app-location
+                route="{{route}}"
+                url-space-regex="^[[rootPath]]">
+        </app-location>
 
-    <app-route
-        route="{{route}}"
-        pattern="[[rootPath]]:page"
-        data="{{routeData}}"
-        tail="{{subroute}}">
-    </app-route>
+        <app-route
+                route="{{route}}"
+                pattern="[[rootPath]]:page"
+                data="{{routeData}}"
+                tail="{{subroute}}">
+        </app-route>
 
-    <app-drawer-layout fullbleed narrow="{{narrow}}">
-      <!-- Drawer content -->
-      <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
-        <app-toolbar>Menu</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="user" href="[[rootPath]]user">User</a>
-        </iron-selector>
-      </app-drawer>
+        <app-drawer-layout fullbleed narrow="{{narrow}}">
+            <!-- Drawer content -->
+            <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
+                <app-toolbar>Menu</app-toolbar>
+                <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                    <a name="user" href="[[rootPath]]user">User</a>
+                    <a name="accounts" href="[[rootPath]]accounts">Accounts</a>
+                </iron-selector>
+            </app-drawer>
 
-      <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+            <!-- Main content -->
+            <app-header-layout has-scrolling-region>
 
-        <app-header slot="header" condenses reveals effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
-            <div main-title>Lavaeolus</div>
-          </app-toolbar>
-        </app-header>
+                <app-header slot="header" condenses reveals effects="waterfall">
+                    <app-toolbar>
+                        <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+                        <div main-title>Lavaeolus</div>
+                    </app-toolbar>
+                </app-header>
 
-        <iron-pages
-            selected="[[page]]"
-            attr-for-selected="name"
-            fallback-selection="error"
-            role="main">
-          <user-view name="user" token="{{token}}"></user-view>
-          <error-view name="error"></error-view>
-        </iron-pages>
-      </app-header-layout>
-    </app-drawer-layout>
-  </template>
+                <iron-pages
+                        selected="[[page]]"
+                        attr-for-selected="name"
+                        fallback-selection="error"
+                        role="main">
+                    <user-view name="user" token="{{token}}"></user-view>
+                    <accounts-view name="accounts" token="{{token}}"></accounts-view>
+                    <error-view name="error"></error-view>
+                </iron-pages>
+            </app-header-layout>
+        </app-drawer-layout>
+    </template>
 
-  <script>
+    <script>
     class LavaeolusPage extends Polymer.Element {
       static get is() { return 'lavaeolus-page'; }
 
