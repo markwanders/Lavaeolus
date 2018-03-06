@@ -11,4 +11,13 @@ public class IndexController {
         return "index.html";
     }
 
+    @RequestMapping("/accounts")
+    String accounts() {
+        return "index.html";
+    }
+
+    @RequestMapping("/user")
+    String user() {
+        return "index.html";
+    }
 }
