@@ -37,7 +37,7 @@ public class EthereumService implements AccountService {
         for(String address : addresses) {
             EtherScanReply etherScanReply = etherScanClient.getBalance(address);
 
-            Account account = new Account(Account.AccountType.ETHEREUM);
+            Account account = new Account(Account.AccountType.ethereum);
 
             BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
             BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);

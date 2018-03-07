@@ -33,7 +33,7 @@ public class BunqClient {
                 getUserID(apiContext)
         ).getValue();
 
-        LOG.info("Received accounts from Bunq: {}", monetaryAccounts);
+        LOG.debug("Received accounts from Bunq: {}", monetaryAccounts);
 
         return monetaryAccounts;
     }
@@ -64,7 +64,7 @@ public class BunqClient {
             payments.addAll(previousPayments);
         }
 
-        LOG.info("Received transactions from Bunq: {}", payments);
+        LOG.debug("Received transactions from Bunq: {}", payments);
 
         return payments;
     }

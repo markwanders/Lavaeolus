@@ -1,0 +1,73 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="transactions-view">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+        </style>
+        <template is="dom-repeat" items="{{transactions}}" as="transaction">
+            <div class="card">
+                <h1>{{getFormattedTimestamp(transaction.dateTime)}}</h1>
+                <dl>
+                    <dt>To/from:</dt>
+                    <dd>{{transaction.counterParty}}</dd>
+                    <dt>Amount:</dt>
+                    <dd>{{transaction.amount}} {{transaction.currency}}</dd>
+                    <dt>Description:</dt>
+                    <dd>{{transaction.description}}</dd>
+                </dl>
+            </div>
+        </template>
+
+        <iron-ajax
+                id="transactions"
+                headers={{headers}}
+                method="GET"
+                content-type="application/json"
+                handle-as="json"
+                last-response="{{transactions}}">
+        </iron-ajax>
+    </template>
+
+    <script>
+    class TransactionsView extends Polymer.Element {
+        static get is() { return 'transactions-view'; }
+
+        static get properties() {
+            return {
+                transactions: Object
+            }
+        }
+
+         go(accountType, accountID) {
+           this.$.transactions.url = "/api/accounts/" + accountType + "/" + accountID + "/transactions";
+           this.$.transactions.generateRequest();
+        }
+
+        getFormattedTimestamp(timestamp) {
+            var date = new Date(timestamp * 1000);
+            console.log(date);
+            return date.toLocaleDateString("en-US");
+        }
+
+    }
+
+    window.customElements.define(TransactionsView.is, TransactionsView);
+  </script>
+</dom-module>

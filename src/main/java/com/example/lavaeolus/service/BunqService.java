@@ -60,7 +60,7 @@ public class BunqService implements AccountService {
     }
 
     private Account createAccountFromBunqAccount(MonetaryAccount monetaryAccount) {
-        Account account = new Account(Account.AccountType.BUNQ);
+        Account account = new Account(Account.AccountType.bunq);
 
         Account.Identifier primaryIdentifier = new Account.Identifier();
         primaryIdentifier.setName("id");
