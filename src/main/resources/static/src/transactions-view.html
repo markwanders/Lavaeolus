@@ -32,9 +32,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <app-route
                 route="{{route}}"
-                pattern="[[rootPath]]:page/:accountType"
-                data="{{routeData}}"
-                tail="{{subroute}}">
+                pattern="[[rootPath]]transactions/:type/:id"
+                data="{{routeData}}">
         </app-route>
 
         <template is="dom-repeat" items="{{transactions}}" as="transaction">
@@ -69,10 +68,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         static get properties() {
             return {
                 transactions: Object,
-                token: {
-                    type: String,
+                token: String,
+                routeData: {
+                    type: Object,
                     notify: true,
-                    observer: '_tokenUpdated'
+                    observer: '_routeDataUpdated'
                 },
                 loading: {
                       type: Boolean,
@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
          go() {
-            this.$.transactions.url = "/api/accounts/bunq/1881/transactions";
+            this.$.transactions.url = "/api/accounts/" + this.routeData.type + "/" + this.routeData.id + "/transactions";
             this.$.transactions.generateRequest();
          }
 
@@ -95,8 +95,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return date.toLocaleDateString("en-US");
         }
 
-         _tokenUpdated(){
-            if(this.token){
+        _routeDataUpdated(){
+            if(this.token && this.routeData){
                 this.go();
             }
         }

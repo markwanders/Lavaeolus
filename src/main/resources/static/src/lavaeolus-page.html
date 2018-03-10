@@ -121,8 +121,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         fallback-selection="error"
                         role="main">
                     <user-view name="user" loading="{{loading}}" token="{{token}}"></user-view>
-                    <accounts-view route="{{route}}" name="accounts" loading="{{loading}}" token="{{token}}"></accounts-view>
-                    <transactions-view name="transactions" route="{{subroute}}" loading="{{loading}}" token="{{token}}"></transactions-view>
+                    <accounts-view name="accounts" loading="{{loading}}" token="{{token}}"></accounts-view>
+                    <transactions-view route="{{subroute}}" name="transactions" loading="{{loading}}" token="{{token}}"></transactions-view>
                     <error-view name="error"></error-view>
                 </iron-pages>
             </app-header-layout>
@@ -153,8 +153,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           routeData: Object,
           subroute: String,
-          // This shouldn't be neccessary, but the Analyzer isn't picking up
-          // Polymer.Element#rootPath
           rootPath: String,
         };
       }

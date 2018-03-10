@@ -10,9 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="accounts-view">
@@ -40,14 +40,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <h1>{{account.type}}</h1>
                 <dl>
                     <template is="dom-repeat" items="{{account.identifiers}}" as="identifier">
-                        <dt>{{identifier.name}}: </dt>
+                        <dt>{{identifier.name}}:</dt>
                         <dd>{{identifier.value}}</dd>
                     </template>
                 </dl>
                 <template is="dom-repeat" items="{{item.balances}}" as="balance">
                     <p>{{balance.currency}} {{balance.amount}}</p>
                 </template>
-                <a href$="/transactions/{{account.type}}">View transactions</a>
+                <a href$="{{computeTransactionsURL(account)}}">
+                    <paper-button class="primary" raised>View transactions</paper-button>
+                </a>
             </div>
         </template>
 
@@ -79,10 +81,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                       type: Boolean,
                       notify: true
                 },
-                route: {
-                    type: String,
-                    notify: true
-                },
                 headers: {
                     type: Object,
                     computed: '_getHeader(token)'
@@ -92,6 +90,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         go() {
             this.$.accounts.generateRequest();
+        }
+
+        computeTransactionsURL(account) {
+            return "/transactions/" + account.type + "/" + account.identifiers[0].value;
         }
 
         _tokenUpdated(){

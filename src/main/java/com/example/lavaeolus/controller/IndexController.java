@@ -16,9 +16,9 @@ public class IndexController {
         return "index.html";
     }
 
-    @RequestMapping("/transactions")
+    @RequestMapping({"/transactions/*/*", "/transactions/*", "/transactions"})
     String transactions() {
-        return "index.html";
+        return "/index.html";
     }
 
     @RequestMapping("/user")
