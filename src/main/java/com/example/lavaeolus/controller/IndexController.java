@@ -16,6 +16,11 @@ public class IndexController {
         return "index.html";
     }
 
+    @RequestMapping("/transactions")
+    String transactions() {
+        return "index.html";
+    }
+
     @RequestMapping("/user")
     String user() {
         return "index.html";

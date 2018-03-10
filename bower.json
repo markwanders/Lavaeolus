@@ -1,5 +1,5 @@
 {
-  "name": "lavaeolus",
+  "name": "Lavaeolus",
   "description": "Web frontend for the Lavaeolus API",
   "main": "index.html",
   "dependencies": {

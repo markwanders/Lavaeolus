@@ -9,10 +9,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="transactions-view.html">
 
 <dom-module id="accounts-view">
     <template>
@@ -28,9 +29,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         overflow-wrap: break-word;
        }
     </style>
+        <app-location
+                route="{{route}}"
+                url-space-regex="^[[rootPath]]">
+        </app-location>
+
         <template is="dom-repeat" items="{{accounts}}" as="account">
             <div class="card">
-                <div class="circle" on-click="getTransactions">#[[index]]</div>
+                <div class="circle">#[[index]]</div>
                 <h1>{{account.type}}</h1>
                 <dl>
                     <template is="dom-repeat" items="{{account.identifiers}}" as="identifier">
@@ -41,10 +47,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <template is="dom-repeat" items="{{item.balances}}" as="balance">
                     <p>{{balance.currency}} {{balance.amount}}</p>
                 </template>
+                <a href$="/transactions/{{account.type}}">View transactions</a>
             </div>
         </template>
-
-        <transactions-view id="transactionsView" token="{{token}}" loading="{{loading}}" headers="{{headers}}"></transactions-view>
 
         <iron-ajax
                 id="accounts"
@@ -74,6 +79,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                       type: Boolean,
                       notify: true
                 },
+                route: {
+                    type: String,
+                    notify: true
+                },
                 headers: {
                     type: Object,
                     computed: '_getHeader(token)'
@@ -83,13 +92,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         go() {
             this.$.accounts.generateRequest();
-        }
-
-        getTransactions(e) {
-            var model = e.model;
-            var accountType = model.account.type;
-            var accountID = model.account.identifiers[0].value;
-            this.$.transactionsView.go(accountType, accountID);
         }
 
         _tokenUpdated(){

@@ -28,6 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="lazy-import" href="user-view.html">
 <link rel="lazy-import" href="accounts-view.html">
+<link rel="lazy-import" href="transactions-view.html">
 <link rel="lazy-import" href="error-view.html">
 
 <dom-module id="lavaeolus-page">
@@ -70,9 +71,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-weight: bold;
       }
 
+      .drawer-list a:hover {
+        background-color: LightGray
+      }
+
       .spinner-container {
-                @apply(--layout-horizontal);
-                @apply(--layout-center-justified);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
       }
 
     </style>
@@ -116,7 +121,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         fallback-selection="error"
                         role="main">
                     <user-view name="user" loading="{{loading}}" token="{{token}}"></user-view>
-                    <accounts-view name="accounts" loading="{{loading}}" token="{{token}}"></accounts-view>
+                    <accounts-view route="{{route}}" name="accounts" loading="{{loading}}" token="{{token}}"></accounts-view>
+                    <transactions-view name="transactions" route="{{subroute}}" loading="{{loading}}" token="{{token}}"></transactions-view>
                     <error-view name="error"></error-view>
                 </iron-pages>
             </app-header-layout>

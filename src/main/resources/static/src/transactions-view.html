@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="shared-styles.html">
@@ -22,6 +24,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 padding: 10px;
             }
         </style>
+
+        <app-location
+                route="{{route}}"
+                url-space-regex="^[[rootPath]]">
+        </app-location>
+
+        <app-route
+                route="{{route}}"
+                pattern="[[rootPath]]:page/:accountType"
+                data="{{routeData}}"
+                tail="{{subroute}}">
+        </app-route>
 
         <template is="dom-repeat" items="{{transactions}}" as="transaction">
             <div class="card">
@@ -55,21 +69,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         static get properties() {
             return {
                 transactions: Object,
+                token: {
+                    type: String,
+                    notify: true,
+                    observer: '_tokenUpdated'
+                },
                 loading: {
                       type: Boolean,
                       notify: true
+                },
+                headers: {
+                    type: Object,
+                    computed: '_getHeader(token)'
                 }
             }
         }
 
-         go(accountType, accountID) {
-           this.$.transactions.url = "/api/accounts/" + accountType + "/" + accountID + "/transactions";
-           this.$.transactions.generateRequest();
-        }
+         go() {
+            this.$.transactions.url = "/api/accounts/bunq/1881/transactions";
+            this.$.transactions.generateRequest();
+         }
 
         getFormattedTimestamp(timestamp) {
             var date = new Date(timestamp * 1000);
             return date.toLocaleDateString("en-US");
+        }
+
+         _tokenUpdated(){
+            if(this.token){
+                this.go();
+            }
+        }
+
+        _getHeader(token) {
+            return {'x-auth-token': token};
         }
 
     }
