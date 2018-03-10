@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
         </template>
 
-        <transactions-view id="transactionsView" token="{{token}}" headers="{{headers}}"></transactions-view>
+        <transactions-view id="transactionsView" token="{{token}}" loading="{{loading}}" headers="{{headers}}"></transactions-view>
 
         <iron-ajax
                 id="accounts"
@@ -53,6 +53,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 method="GET"
                 content-type="application/json"
                 handle-as="json"
+                loading="{{loading}}"
                 last-response="{{accounts}}">
         </iron-ajax>
     </template>
@@ -68,6 +69,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     type: String,
                     notify: true,
                     observer: '_tokenUpdated'
+                },
+                loading: {
+                      type: Boolean,
+                      notify: true
                 },
                 headers: {
                     type: Object,

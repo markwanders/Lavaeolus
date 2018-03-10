@@ -36,6 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 method="GET"
                 content-type="application/json"
                 handle-as="json"
+                loading="{{loading}}"
                 last-response="{{user}}">
         </iron-ajax>
     </template>
@@ -47,6 +48,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         static get properties() {
             return {
                 user: Object,
+                loading: {
+                      type: Boolean,
+                      notify: true
+                },
                 token: {
                     type: String,
                     notify: true,

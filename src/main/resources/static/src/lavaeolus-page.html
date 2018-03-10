@@ -20,6 +20,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 <link rel="import" href="my-icons.html">
 
 <link rel="lazy-import" href="user-view.html">
@@ -65,6 +69,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: black;
         font-weight: bold;
       }
+
+      .spinner-container {
+                @apply(--layout-horizontal);
+                @apply(--layout-center-justified);
+      }
+
     </style>
 
         <app-location
@@ -105,12 +115,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         attr-for-selected="name"
                         fallback-selection="error"
                         role="main">
-                    <user-view name="user" token="{{token}}"></user-view>
-                    <accounts-view name="accounts" token="{{token}}"></accounts-view>
+                    <user-view name="user" loading="{{loading}}" token="{{token}}"></user-view>
+                    <accounts-view name="accounts" loading="{{loading}}" token="{{token}}"></accounts-view>
                     <error-view name="error"></error-view>
                 </iron-pages>
             </app-header-layout>
         </app-drawer-layout>
+
+        <paper-dialog id="loadingDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>Loading, please wait...</h2>
+            <div class="spinner-container">
+                <paper-spinner active></paper-spinner>
+            </div>
+        </paper-dialog>
     </template>
 
     <script>
@@ -139,6 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get observers() {
         return [
           '_routePageChanged(routeData.page)',
+          '_loadingChanged(loading)'
         ];
       }
 
@@ -169,6 +187,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _logout() {
         this.token = '';
+      }
+
+      _loadingChanged(loading) {
+        if(loading) {
+            this.$.loadingDialog.open();
+        } else {
+            this.$.loadingDialog.close();
+        }
       }
     }
 

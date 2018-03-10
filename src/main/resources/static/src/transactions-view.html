@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="transactions-view">
@@ -21,6 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 padding: 10px;
             }
         </style>
+
         <template is="dom-repeat" items="{{transactions}}" as="transaction">
             <div class="card">
                 <h1>{{getFormattedTimestamp(transaction.dateTime)}}</h1>
@@ -41,6 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 method="GET"
                 content-type="application/json"
                 handle-as="json"
+                loading="{{loading}}"
                 last-response="{{transactions}}">
         </iron-ajax>
     </template>
@@ -51,7 +54,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         static get properties() {
             return {
-                transactions: Object
+                transactions: Object,
+                loading: {
+                      type: Boolean,
+                      notify: true
+                }
             }
         }
 
@@ -62,7 +69,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         getFormattedTimestamp(timestamp) {
             var date = new Date(timestamp * 1000);
-            console.log(date);
             return date.toLocaleDateString("en-US");
         }
 
