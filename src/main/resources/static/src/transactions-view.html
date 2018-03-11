@@ -36,17 +36,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 data="{{routeData}}">
         </app-route>
 
-        <template is="dom-repeat" items="{{transactions}}" as="transaction">
+        <template is="dom-repeat" items="{{sortedTransactions}}" as="sortedTransaction">
             <div class="card">
-                <h1>{{getFormattedTimestamp(transaction.dateTime)}}</h1>
-                <dl>
-                    <dt>To/from:</dt>
-                    <dd>{{transaction.counterParty}}</dd>
-                    <dt>Amount:</dt>
-                    <dd>{{transaction.amount}} {{transaction.currency}}</dd>
-                    <dt>Description:</dt>
-                    <dd>{{transaction.description}}</dd>
-                </dl>
+                <h1>{{sortedTransaction.date}}</h1>
+                <template is="dom-repeat" items="{{sortedTransaction.transactions}}" as="transaction">
+                    <hr>
+                    <dl>
+                        <dt>At:</dt>
+                        <dd>{{getFormattedTime(transaction.dateTime)}}</dd>
+                        <dt>To/from:</dt>
+                        <dd>{{transaction.counterParty}}</dd>
+                        <dt>Amount:</dt>
+                        <dd>{{transaction.amount}} {{transaction.currency}}</dd>
+                        <dt>Description:</dt>
+                        <dd>{{transaction.description}}</dd>
+                    </dl>
+                </template>
             </div>
         </template>
 
@@ -57,7 +62,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 content-type="application/json"
                 handle-as="json"
                 loading="{{loading}}"
-                last-response="{{transactions}}">
+                last-response="{{transactions}}"
+                on-response="handleResponse">
         </iron-ajax>
     </template>
 
@@ -68,6 +74,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         static get properties() {
             return {
                 transactions: Object,
+                sortedTransactions: Array,
                 token: String,
                 routeData: {
                     type: Object,
@@ -90,9 +97,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.$.transactions.generateRequest();
          }
 
-        getFormattedTimestamp(timestamp) {
+        getFormattedDate(timestamp) {
             var date = new Date(timestamp * 1000);
-            return date.toLocaleDateString("en-US");
+            return date.toLocaleDateString("nl-NL");
+        }
+
+        getFormattedTime(timestamp) {
+            var date = new Date(timestamp * 1000);
+            return date.toLocaleTimeString("nl-NL");
         }
 
         _routeDataUpdated(){
@@ -103,6 +115,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _getHeader(token) {
             return {'x-auth-token': token};
+        }
+
+        handleResponse() {
+            if(this.transactions) {
+                this.sortedTransactions = [];
+                for(var i = 0; i < this.transactions.length; i++) {
+                    var formattedDate = this.getFormattedDate(this.transactions[i].dateTime);
+                    var found = false;
+                    var foundIndex;
+                    for(var j = 0; j < this.sortedTransactions.length; j++) {
+                        if(formattedDate === this.sortedTransactions[j].date) {
+                            found = true;
+                            foundIndex = j;
+                            break;
+                        }
+                    }
+                    if(found) {
+                        this.sortedTransactions[foundIndex].transactions.push(this.transactions[i]);
+                    } else {
+                        this.sortedTransactions.push({date: formattedDate, transactions: [this.transactions[i]]});
+                    }
+                }
+            }
         }
 
     }
