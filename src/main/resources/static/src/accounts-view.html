@@ -18,17 +18,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="accounts-view">
     <template>
         <style include="shared-styles">
-      :host {
-        display: block;
+          :host {
+            display: block;
 
-        padding: 10px;
-      }
+            padding: 10px;
+          }
 
-      dd {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-       }
-    </style>
+          dd {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+           }
+        </style>
+
         <app-location
                 route="{{route}}"
                 url-space-regex="^[[rootPath]]">
@@ -108,5 +109,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     window.customElements.define(AccountsView.is, AccountsView);
-  </script>
+    </script>
 </dom-module>

@@ -16,12 +16,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="user-view">
     <template>
         <style include="shared-styles">
-      :host {
-        display: block;
+          :host {
+            display: flex;
 
-        padding: 10px;
-      }
-    </style>
+            padding: 10px;
+          }
+        </style>
 
         <div class="card">
             <div class="circle">{{user.id}}</div>
@@ -29,6 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <p>Role: {{user.role}}</p>
             <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
         </div>
+
         <iron-ajax
                 id="user"
                 headers={{headers}}
@@ -80,5 +81,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     window.customElements.define(UserView.is, UserView);
-  </script>
+    </script>
 </dom-module>

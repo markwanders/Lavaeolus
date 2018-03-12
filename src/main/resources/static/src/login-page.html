@@ -9,32 +9,32 @@
 <dom-module id="login-page">
     <template>
         <style include="shared-styles">
-      :host {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background: var(--dark-primary-color);
-      }
-      .wrapper-btns {
-        margin-top: 15px;
-      }
-      .login {
-        background: #fff;
-        box-sizing: border-box;
-        padding: 20px;
-        width: 400px;
-      }
-      @media (max-width: 600px){
-        :host {
-          justify-content: flex-end;
-        }
-        .login {
-          width: 100vw;
-          height: 50vh;
-        }
-      }
-    </style>
+          :host {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--dark-primary-color);
+          }
+          .wrapper-btns {
+            margin-top: 15px;
+          }
+          .login {
+            background: #fff;
+            box-sizing: border-box;
+            padding: 20px;
+            width: 400px;
+          }
+          @media (max-width: 600px){
+            :host {
+              justify-content: flex-end;
+            }
+            .login {
+              width: 100vw;
+              height: 50vh;
+            }
+          }
+        </style>
 
         <paper-material class="login" elevation="3">
             <h1>Log in</h1>

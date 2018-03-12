@@ -1,7 +1,7 @@
 package com.example.lavaeolus.security;
 
 import com.example.lavaeolus.dao.UserRepository;
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.dao.domain.LavaeolusUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +17,7 @@ public class TokenUserDetailsService implements UserDetailsService {
 
     @Override
     public TokenUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
+        final LavaeolusUser user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
 
         TokenUser tokenUser = new TokenUser(user);
         accountStatusUserDetailsChecker.check(tokenUser);

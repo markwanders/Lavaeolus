@@ -3,15 +3,25 @@ package com.example.lavaeolus.configuration;
 import com.bunq.sdk.context.ApiContext;
 import com.bunq.sdk.context.ApiEnvironmentType;
 import com.bunq.sdk.json.BunqGsonBuilder;
+import com.example.lavaeolus.dao.UserRepository;
+import com.example.lavaeolus.dao.domain.Role;
+import com.example.lavaeolus.dao.domain.LavaeolusUser;
 import com.google.gson.Gson;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Configuration
 public class LavaeolusConfiguration {
@@ -29,6 +39,9 @@ public class LavaeolusConfiguration {
 
     @Value("${bunq.conf-location}")
     private String confLocation;
+
+    @Value("${lavaeolus.database-url}")
+    private String databaseURL;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -51,5 +64,44 @@ public class LavaeolusConfiguration {
         }
 
         return apiContext;
+    }
+
+    @Bean
+    @Profile("local")
+    public InitializingBean insertDefaultUsers() {
+        return new InitializingBean() {
+            @Autowired
+            private UserRepository userRepository;
+
+            @Override
+            public void afterPropertiesSet() throws Exception {
+                addUser("admin", "admin");
+                addUser("user", "user");
+            }
+
+            private void addUser(String username, String password) {
+                LavaeolusUser user = new LavaeolusUser();
+                user.setUsername(username);
+                user.setPassword(new BCryptPasswordEncoder().encode(password));
+                user.setRole(username.equals("admin") ? Role.ADMIN : Role.USER);
+                userRepository.save(user);
+            }
+        };
+    }
+
+    @Bean
+    public BasicDataSource dataSource() throws URISyntaxException {
+        URI dbUri = new URI(databaseURL);
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=require";
+
+        BasicDataSource basicDataSource = new BasicDataSource();
+        basicDataSource.setUrl(dbUrl);
+        basicDataSource.setUsername(username);
+        basicDataSource.setPassword(password);
+
+        return basicDataSource;
     }
 }

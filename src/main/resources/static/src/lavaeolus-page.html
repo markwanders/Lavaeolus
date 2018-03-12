@@ -34,53 +34,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="lavaeolus-page">
     <template>
         <style>
-      :host {
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
+          :host {
+            --app-primary-color: #4285f4;
+            --app-secondary-color: black;
 
-        display: block;
-      }
+            display: flex;
+          }
 
-      app-drawer-layout:not([narrow]) [drawer-toggle] {
-        display: none;
-      }
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+            display: none;
+          }
 
-      app-header {
-        color: #fff;
-        background-color: var(--app-primary-color);
-      }
+          app-header {
+            color: #fff;
+            background-color: var(--app-primary-color);
+          }
 
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
+          app-header paper-icon-button {
+            --paper-icon-button-ink-color: white;
+          }
 
-      .drawer-list {
-        margin: 0 20px;
-      }
+          .drawer-list {
+            margin: 0 20px;
+          }
 
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        text-decoration: none;
-        color: var(--app-secondary-color);
-        line-height: 40px;
-      }
+          .drawer-list a {
+            display: block;
+            padding: 0 16px;
+            text-decoration: none;
+            color: var(--app-secondary-color);
+            line-height: 40px;
+          }
 
-      .drawer-list a.iron-selected {
-        color: black;
-        font-weight: bold;
-      }
+          .drawer-list a.iron-selected {
+            color: black;
+            font-weight: bold;
+          }
 
-      .drawer-list a:hover {
-        background-color: LightGray
-      }
+          .drawer-list a:hover {
+            background-color: LightGray
+          }
 
-      .spinner-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
-      }
+          .spinner-container {
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+          }
 
-    </style>
+        </style>
 
         <app-location
                 route="{{route}}"
@@ -203,5 +203,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     window.customElements.define(LavaeolusPage.is, LavaeolusPage);
-  </script>
+    </script>
 </dom-module>

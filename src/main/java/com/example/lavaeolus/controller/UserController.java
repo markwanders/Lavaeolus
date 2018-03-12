@@ -1,6 +1,6 @@
 package com.example.lavaeolus.controller;
 
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.dao.domain.LavaeolusUser;
 import com.example.lavaeolus.security.TokenUserDetailsService;
 import com.example.lavaeolus.security.UserAuthentication;
 import org.slf4j.Logger;
@@ -30,13 +30,13 @@ public class UserController {
     public ResponseEntity getUser() throws IOException {
         LOG.info("Received request on getAccounts endpoint");
 
-        User user = tokenUserDetailsService.loadUserByUsername(getCurrentUser().getUsername()).getUser();
+        LavaeolusUser user = tokenUserDetailsService.loadUserByUsername(getCurrentUser().getUsername()).getUser();
 
         return new ResponseEntity<>(user, HttpStatus.OK);
 
     }
 
-    private User getCurrentUser() {
+    private LavaeolusUser getCurrentUser() {
         return ((UserAuthentication) SecurityContextHolder.getContext().getAuthentication()).getDetails().getUser();
     }
 }

@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User {
+public class LavaeolusUser {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

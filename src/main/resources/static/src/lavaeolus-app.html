@@ -7,33 +7,32 @@
 <link rel="import" href="lavaeolus-page.html">
 
 <dom-module id="lavaeolus-app">
-  <template>
-    <style>
-      :host {
-        display: flex;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
+    <template>
+        <style>
+          :host {
+            display: flex;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+          }
 
-      neon-animated-pages {
-        flex: 1;
-      }
-    </style>
+          neon-animated-pages {
+            flex: 1;
+          }
+        </style>
 
-    <neon-animated-pages selected="{{selected}}" entry-animation="fade-in-animation"
-                         exit-animation="fade-out-animation">
+        <neon-animated-pages selected="{{selected}}" entry-animation="fade-in-animation"
+                             exit-animation="fade-out-animation">
 
-      <login-page token="{{token}}"></login-page>
-      <lavaeolus-page token="{{token}}"></lavaeolus-page>
+            <login-page token="{{token}}"></login-page>
+            <lavaeolus-page token="{{token}}"></lavaeolus-page>
 
-    </neon-animated-pages>
-    <iron-localstorage name="token" value="{{token}}"></iron-localstorage>
-
-  </template>
-  <script>
+        </neon-animated-pages>
+        <iron-localstorage name="token" value="{{token}}"></iron-localstorage>
+    </template>
+    <script>
     Polymer({
       is: 'lavaeolus-app',
       properties: {
@@ -49,18 +48,10 @@
         }
       },
 
-      listeners: {
-        'logout': '_logout'
-      },
-
       _selectPage: function(token) {
         return token ? 1 : 0;
-      },
-
-      _logout: function() {
-        // invalidate token to server
-        this.token = '';
       }
+
     });
-  </script>
+    </script>
 </dom-module>
