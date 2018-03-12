@@ -6,8 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 @Entity
+@Table(name="\"User\"")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LavaeolusUser {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

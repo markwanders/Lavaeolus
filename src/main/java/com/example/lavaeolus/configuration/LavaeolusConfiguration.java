@@ -5,7 +5,7 @@ import com.bunq.sdk.context.ApiEnvironmentType;
 import com.bunq.sdk.json.BunqGsonBuilder;
 import com.example.lavaeolus.dao.UserRepository;
 import com.example.lavaeolus.dao.domain.Role;
-import com.example.lavaeolus.dao.domain.LavaeolusUser;
+import com.example.lavaeolus.dao.domain.User;
 import com.google.gson.Gson;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
@@ -67,23 +66,27 @@ public class LavaeolusConfiguration {
     }
 
     @Bean
-    @Profile("local")
     public InitializingBean insertDefaultUsers() {
         return new InitializingBean() {
+            private final static String DEFAULT_USER = "admin";
+            private final static String DEFAULT_PASSWORD = "admin";
+
             @Autowired
             private UserRepository userRepository;
 
             @Override
             public void afterPropertiesSet() throws Exception {
-                addUser("admin", "admin");
-                addUser("user", "user");
+                //Add default user if not already present
+                if(!userRepository.findOneByUsername(DEFAULT_USER).isPresent()) {
+                    addUser(DEFAULT_USER, DEFAULT_PASSWORD);
+                }
             }
 
             private void addUser(String username, String password) {
-                LavaeolusUser user = new LavaeolusUser();
+                User user = new User();
                 user.setUsername(username);
                 user.setPassword(new BCryptPasswordEncoder().encode(password));
-                user.setRole(username.equals("admin") ? Role.ADMIN : Role.USER);
+                user.setRole(username.equals(DEFAULT_USER) ? Role.ADMIN : Role.USER);
                 userRepository.save(user);
             }
         };
