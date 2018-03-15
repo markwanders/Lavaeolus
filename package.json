@@ -7,8 +7,10 @@
     "url": "https://github.com/markwanders/Lavaeolus.git"
   },
   "main": "index.js",
-  "devDependencies": {
+  "dependencies": {
     "bower": "1.8.0",
+  },
+  "devDependencies": {
     "eslint": "^3.19.0",
     "eslint-config-google": "^0.7.0",
     "eslint-plugin-html": "^2.0.0"
