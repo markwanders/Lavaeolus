@@ -123,7 +123,7 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
+<!--                     <execution>
                         <id>Bower install</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -135,7 +135,7 @@
                                 <argument>install</argument>
                             </arguments>
                         </configuration>
-                    </execution>
+                    </execution> -->
                 </executions>
             </plugin>
         </plugins>
