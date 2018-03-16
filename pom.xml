@@ -138,7 +138,7 @@
                         <configuration>
                             <executable>bower</executable>
                             <arguments>
-                                <argument>install</argument>
+                                <argument>install -s</argument>
                             </arguments>
                         </configuration>
                     </execution>
