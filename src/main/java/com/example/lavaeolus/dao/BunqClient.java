@@ -22,7 +22,7 @@ public class BunqClient {
     /**
      * Size of each page of payments listing.
      */
-    private static final int PAGE_SIZE = 3;
+    private static final int PAGE_SIZE = 10;
 
     @Autowired
     private ApiContext apiContext;
