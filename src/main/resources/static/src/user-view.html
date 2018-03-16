@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="user-view">
@@ -21,13 +22,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             padding: 10px;
           }
+          .wrapper-btns {
+            margin-top: 15px;
+          }
+          .form {
+            background: #fff;
+            box-sizing: border-box;
+            width: 400px;
+          }
         </style>
 
         <div class="card">
             <div class="circle">{{user.id}}</div>
             <h1>{{user.username}}</h1>
             <p>Role: {{user.role}}</p>
-            <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+            <iron-form class="form" id="form" headers="{{headers}}">
+                <form method="post" action="/api/user" >
+                    <paper-input value="{{newPassword}}" label="New password" name="newPassword"
+                                 type="password" required></paper-input>
+                    <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
+                                 type="password" required on-change="_passwordMatch"></paper-input>
+                    <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
+                    <span class="success-message" hidden="[[!successMessage]]">[[successMessage]]</span>
+                    <div class="wrapper-btns">
+                        <paper-button id="change-password" class="primary" on-tap="_submit" raised>Change password</paper-button>
+                    </div>
+                </form>
+            </iron-form>
         </div>
 
         <iron-ajax
@@ -65,8 +86,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
         }
 
+        static get listeners() {
+            return {
+                'iron-form-response': '_handleChangePasswordSuccess',
+                'iron-form-error': '_handleChangePasswordError'
+            }
+        }
+
         go() {
             this.$.user.generateRequest();
+        }
+
+        _submit() {
+            this.$.form.submit();
         }
 
         _tokenUpdated(){
@@ -75,8 +107,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
         }
 
+        _handleChangePasswordError() {
+            this.errorMessage = 'You are doing it wrong.'
+        }
+
+        _handleChangePasswordSuccess() {
+            this.errorMessage = 'Successfully changed password.'
+        }
+
         _getHeader(token) {
             return {'x-auth-token': token};
+        }
+
+        _passwordMatch() {
+            var password = encodeURIComponent(this.newPassword);
+            var confirmPassword = encodeURIComponent(this.confirmNewPassword);
+            if(password != confirmPassword){
+                this.errorMessage = 'Passwords not equal.'
+            } else {
+                this.errorMessage = ''
+            }
         }
     }
 
