@@ -44,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     <dl>
                         <dt>At:</dt>
                         <dd>{{getFormattedTime(transaction.dateTime)}}</dd>
-                        <dt>To/from:</dt>
+                        <dt>[[_toFrom(transaction.amount)]]:</dt>
                         <dd>{{transaction.counterParty}}</dd>
                         <dt>Amount:</dt>
                         <dd>{{transaction.amount}} {{transaction.currency}}</dd>
@@ -99,7 +99,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         getFormattedDate(timestamp) {
             var date = new Date(timestamp * 1000);
-            return date.toLocaleDateString("nl-NL");
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString("en-US", options);
         }
 
         getFormattedTime(timestamp) {
@@ -108,13 +109,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         _routeDataUpdated(){
-            if(this.token && this.routeData){
+            if(this.token && this.routeData && !this.loading){
                 this.go();
             }
         }
 
         _getHeader(token) {
             return {'x-auth-token': token};
+        }
+
+        _toFrom(amount) {
+            return amount >= 0 ? "From" : "To";
         }
 
         handleResponse() {
