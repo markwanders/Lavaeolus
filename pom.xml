@@ -123,12 +123,6 @@
                             </arguments>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>exec-maven-plugin</artifactId>
-                <groupId>org.codehaus.mojo</groupId>
-                <executions>
                     <execution>
                         <id>Bower install</id>
                         <phase>generate-sources</phase>
@@ -138,7 +132,8 @@
                         <configuration>
                             <executable>bower</executable>
                             <arguments>
-                                <argument>install -s</argument>
+                                <argument>install</argument>
+                                <argument>-s</argument>
                             </arguments>
                         </configuration>
                     </execution>
