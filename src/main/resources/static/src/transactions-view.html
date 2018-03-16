@@ -1,0 +1,152 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="transactions-view">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+
+                padding: 10px;
+            }
+        </style>
+
+        <app-location
+                route="{{route}}"
+                url-space-regex="^[[rootPath]]">
+        </app-location>
+
+        <app-route
+                route="{{route}}"
+                pattern="[[rootPath]]transactions/:type/:id"
+                data="{{routeData}}">
+        </app-route>
+
+        <template is="dom-repeat" items="{{sortedTransactions}}" as="sortedTransaction">
+            <div class="card">
+                <h1>{{sortedTransaction.date}}</h1>
+                <template is="dom-repeat" items="{{sortedTransaction.transactions}}" as="transaction">
+                    <hr>
+                    <dl>
+                        <dt>At:</dt>
+                        <dd>{{getFormattedTime(transaction.dateTime)}}</dd>
+                        <dt>[[_toFrom(transaction.amount)]]:</dt>
+                        <dd>{{transaction.counterParty}}</dd>
+                        <dt>Amount:</dt>
+                        <dd>{{transaction.amount}} {{transaction.currency}}</dd>
+                        <dt>Description:</dt>
+                        <dd>{{transaction.description}}</dd>
+                    </dl>
+                </template>
+            </div>
+        </template>
+
+        <iron-ajax
+                id="transactions"
+                headers={{headers}}
+                method="GET"
+                content-type="application/json"
+                handle-as="json"
+                loading="{{loading}}"
+                last-response="{{transactions}}"
+                on-response="handleResponse">
+        </iron-ajax>
+    </template>
+
+    <script>
+    class TransactionsView extends Polymer.Element {
+        static get is() { return 'transactions-view'; }
+
+        static get properties() {
+            return {
+                transactions: Object,
+                sortedTransactions: Array,
+                token: String,
+                routeData: {
+                    type: Object,
+                    notify: true,
+                    observer: '_routeDataUpdated'
+                },
+                loading: {
+                      type: Boolean,
+                      notify: true
+                },
+                headers: {
+                    type: Object,
+                    computed: '_getHeader(token)'
+                }
+            }
+        }
+
+         go() {
+            this.$.transactions.url = "/api/accounts/" + this.routeData.type + "/" + this.routeData.id + "/transactions";
+            this.$.transactions.generateRequest();
+         }
+
+        getFormattedDate(timestamp) {
+            var date = new Date(timestamp * 1000);
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString("en-US", options);
+        }
+
+        getFormattedTime(timestamp) {
+            var date = new Date(timestamp * 1000);
+            return date.toLocaleTimeString("nl-NL");
+        }
+
+        _routeDataUpdated(){
+            if(this.token && this.routeData && !this.loading){
+                this.go();
+            }
+        }
+
+        _getHeader(token) {
+            return {'x-auth-token': token};
+        }
+
+        _toFrom(amount) {
+            return amount >= 0 ? "From" : "To";
+        }
+
+        handleResponse() {
+            if(this.transactions) {
+                this.sortedTransactions = [];
+                for(var i = 0; i < this.transactions.length; i++) {
+                    var formattedDate = this.getFormattedDate(this.transactions[i].dateTime);
+                    var found = false;
+                    var foundIndex;
+                    for(var j = 0; j < this.sortedTransactions.length; j++) {
+                        if(formattedDate === this.sortedTransactions[j].date) {
+                            found = true;
+                            foundIndex = j;
+                            break;
+                        }
+                    }
+                    if(found) {
+                        this.sortedTransactions[foundIndex].transactions.push(this.transactions[i]);
+                    } else {
+                        this.sortedTransactions.push({date: formattedDate, transactions: [this.transactions[i]]});
+                    }
+                }
+            }
+        }
+
+    }
+
+    window.customElements.define(TransactionsView.is, TransactionsView);
+  </script>
+</dom-module>

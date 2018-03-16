@@ -1,0 +1,207 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="my-icons.html">
+
+<link rel="lazy-import" href="user-view.html">
+<link rel="lazy-import" href="accounts-view.html">
+<link rel="lazy-import" href="transactions-view.html">
+<link rel="lazy-import" href="error-view.html">
+
+<dom-module id="lavaeolus-page">
+    <template>
+        <style>
+          :host {
+            --app-primary-color: #4285f4;
+            --app-secondary-color: black;
+
+            display: flex;
+          }
+
+          app-drawer-layout:not([narrow]) [drawer-toggle] {
+            display: none;
+          }
+
+          app-header {
+            color: #fff;
+            background-color: var(--app-primary-color);
+          }
+
+          app-header paper-icon-button {
+            --paper-icon-button-ink-color: white;
+          }
+
+          .drawer-list {
+            margin: 0 20px;
+          }
+
+          .drawer-list a {
+            display: block;
+            padding: 0 16px;
+            text-decoration: none;
+            color: var(--app-secondary-color);
+            line-height: 40px;
+          }
+
+          .drawer-list a.iron-selected {
+            color: black;
+            font-weight: bold;
+          }
+
+          .drawer-list a:hover {
+            background-color: LightGray
+          }
+
+          .spinner-container {
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+          }
+
+        </style>
+
+        <app-location
+                route="{{route}}"
+                url-space-regex="^[[rootPath]]">
+        </app-location>
+
+        <app-route
+                route="{{route}}"
+                pattern="[[rootPath]]:page"
+                data="{{routeData}}"
+                tail="{{subroute}}">
+        </app-route>
+
+        <app-drawer-layout fullbleed narrow="{{narrow}}">
+            <!-- Drawer content -->
+            <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
+                <app-toolbar>Menu</app-toolbar>
+                <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                    <a name="user" href="[[rootPath]]user">User</a>
+                    <a name="accounts" href="[[rootPath]]accounts">Accounts</a>
+                </iron-selector>
+            </app-drawer>
+
+            <!-- Main content -->
+            <app-header-layout has-scrolling-region>
+
+                <app-header slot="header" condenses reveals effects="waterfall">
+                    <app-toolbar>
+                        <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+                        <div main-title>Lavaeolus</div>
+                        <paper-button on-tap="_logout" id="logout">Log out</paper-button>
+                    </app-toolbar>
+                </app-header>
+
+                <iron-pages
+                        selected="[[page]]"
+                        attr-for-selected="name"
+                        fallback-selection="error"
+                        role="main">
+                    <user-view name="user" loading="{{loading}}" token="{{token}}"></user-view>
+                    <accounts-view name="accounts" loading="{{loading}}" token="{{token}}"></accounts-view>
+                    <transactions-view route="{{subroute}}" name="transactions" loading="{{loading}}" token="{{token}}"></transactions-view>
+                    <error-view name="error"></error-view>
+                </iron-pages>
+            </app-header-layout>
+        </app-drawer-layout>
+
+        <paper-dialog id="loadingDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>Loading, please wait...</h2>
+            <div class="spinner-container">
+                <paper-spinner active></paper-spinner>
+            </div>
+        </paper-dialog>
+    </template>
+
+    <script>
+    class LavaeolusPage extends Polymer.Element {
+      static get is() { return 'lavaeolus-page'; }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          },
+          token: {
+            type: String,
+            notify: true
+          },
+          routeData: Object,
+          subroute: String,
+          rootPath: String,
+        };
+      }
+
+      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)',
+          '_loadingChanged(loading)'
+        ];
+      }
+
+      _routePageChanged(page) {
+        // If no page was found in the route data, page will be an empty string.
+        // Default to 'user' in that case.
+        this.page = page || 'user';
+
+        // Close a non-persistent drawer when the page & route are changed.
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      }
+
+      _pageChanged(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl(page + '-view.html');
+        Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            this._showPage404.bind(this),
+            true);
+      }
+
+      _showPage404() {
+        this.page = 'error-view';
+      }
+
+      _logout() {
+        this.token = '';
+      }
+
+      _loadingChanged(loading) {
+        if(loading) {
+            this.$.loadingDialog.open();
+        } else {
+            this.$.loadingDialog.close();
+        }
+      }
+    }
+
+    window.customElements.define(LavaeolusPage.is, LavaeolusPage);
+    </script>
+</dom-module>

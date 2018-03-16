@@ -1,0 +1,135 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="user-view">
+    <template>
+        <style include="shared-styles">
+          :host {
+            display: flex;
+
+            padding: 10px;
+          }
+          .wrapper-btns {
+            margin-top: 15px;
+          }
+          .form {
+            background: #fff;
+            box-sizing: border-box;
+            width: 400px;
+          }
+        </style>
+
+        <div class="card">
+            <div class="circle">{{user.id}}</div>
+            <h1>{{user.username}}</h1>
+            <p>Role: {{user.role}}</p>
+            <iron-form class="form" id="form" headers="{{headers}}">
+                <form method="post" action="/api/user" >
+                    <paper-input value="{{newPassword}}" label="New password" name="newPassword"
+                                 type="password" required></paper-input>
+                    <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
+                                 type="password" required on-change="_passwordMatch"></paper-input>
+                    <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
+                    <span class="success-message" hidden="[[!successMessage]]">[[successMessage]]</span>
+                    <div class="wrapper-btns">
+                        <paper-button id="change-password" class="primary" on-tap="_submit" raised>Change password</paper-button>
+                    </div>
+                </form>
+            </iron-form>
+        </div>
+
+        <iron-ajax
+                id="user"
+                headers={{headers}}
+                url="/api/user"
+                method="GET"
+                content-type="application/json"
+                handle-as="json"
+                loading="{{loading}}"
+                last-response="{{user}}">
+        </iron-ajax>
+    </template>
+
+    <script>
+    class UserView extends Polymer.Element {
+        static get is() { return 'user-view'; }
+
+        static get properties() {
+            return {
+                user: Object,
+                loading: {
+                      type: Boolean,
+                      notify: true
+                },
+                token: {
+                    type: String,
+                    notify: true,
+                    observer: '_tokenUpdated'
+                },
+                headers: {
+                    type: Object,
+                    computed: '_getHeader(token)'
+                }
+            }
+        }
+
+        static get listeners() {
+            return {
+                'iron-form-response': '_handleChangePasswordSuccess',
+                'iron-form-error': '_handleChangePasswordError'
+            }
+        }
+
+        go() {
+            this.$.user.generateRequest();
+        }
+
+        _submit() {
+            this.$.form.submit();
+        }
+
+        _tokenUpdated(){
+            if(this.token){
+                this.go();
+            }
+        }
+
+        _handleChangePasswordError() {
+            this.errorMessage = 'You are doing it wrong.'
+        }
+
+        _handleChangePasswordSuccess() {
+            this.errorMessage = 'Successfully changed password.'
+        }
+
+        _getHeader(token) {
+            return {'x-auth-token': token};
+        }
+
+        _passwordMatch() {
+            var password = encodeURIComponent(this.newPassword);
+            var confirmPassword = encodeURIComponent(this.confirmNewPassword);
+            if(password != confirmPassword){
+                this.errorMessage = 'Passwords not equal.'
+            } else {
+                this.errorMessage = ''
+            }
+        }
+    }
+
+    window.customElements.define(UserView.is, UserView);
+    </script>
+</dom-module>

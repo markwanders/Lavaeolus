@@ -22,7 +22,7 @@ public class BunqClient {
     /**
      * Size of each page of payments listing.
      */
-    private static final int PAGE_SIZE = 3;
+    private static final int PAGE_SIZE = 10;
 
     @Autowired
     private ApiContext apiContext;
@@ -33,7 +33,7 @@ public class BunqClient {
                 getUserID(apiContext)
         ).getValue();
 
-        LOG.info("Received accounts from Bunq: {}", monetaryAccounts);
+        LOG.debug("Received accounts from Bunq: {}", monetaryAccounts);
 
         return monetaryAccounts;
     }
@@ -64,7 +64,7 @@ public class BunqClient {
             payments.addAll(previousPayments);
         }
 
-        LOG.info("Received transactions from Bunq: {}", payments);
+        LOG.debug("Received transactions from Bunq: {}", payments);
 
         return payments;
     }

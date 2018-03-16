@@ -60,7 +60,7 @@ public class Account {
     }
 
     public enum AccountType {
-        BUNQ, ETHEREUM
+        bunq, ethereum
 
     }
 }

@@ -1,0 +1,57 @@
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="login-page.html">
+<link rel="import" href="lavaeolus-page.html">
+
+<dom-module id="lavaeolus-app">
+    <template>
+        <style>
+          :host {
+            display: flex;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+          }
+
+          neon-animated-pages {
+            flex: 1;
+          }
+        </style>
+
+        <neon-animated-pages selected="{{selected}}" entry-animation="fade-in-animation"
+                             exit-animation="fade-out-animation">
+
+            <login-page token="{{token}}"></login-page>
+            <lavaeolus-page token="{{token}}"></lavaeolus-page>
+
+        </neon-animated-pages>
+        <iron-localstorage name="token" value="{{token}}"></iron-localstorage>
+    </template>
+    <script>
+    Polymer({
+      is: 'lavaeolus-app',
+      properties: {
+        token: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        selected: {
+          type: Number,
+          notify: true,
+          computed: '_selectPage(token)'
+        }
+      },
+
+      _selectPage: function(token) {
+        return token ? 1 : 0;
+      }
+
+    });
+    </script>
+</dom-module>
