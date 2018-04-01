@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="transactions-view">
@@ -37,22 +38,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </app-route>
 
         <template is="dom-repeat" items="{{sortedTransactions}}" as="sortedTransaction">
-            <div class="card">
-                <h1>{{sortedTransaction.date}}</h1>
-                <template is="dom-repeat" items="{{sortedTransaction.transactions}}" as="transaction">
-                    <hr>
-                    <dl>
-                        <dt>At:</dt>
-                        <dd>{{getFormattedTime(transaction.dateTime)}}</dd>
-                        <dt>[[_toFrom(transaction.amount)]]:</dt>
-                        <dd>{{transaction.counterParty}}</dd>
-                        <dt>Amount:</dt>
-                        <dd>{{transaction.amount}} {{transaction.currency}}</dd>
-                        <dt>Description:</dt>
-                        <dd>{{transaction.description}}</dd>
-                    </dl>
-                </template>
-            </div>
+            <paper-card class="card" heading="{{sortedTransaction.date}}">
+                <div class="card-content">
+                    <template is="dom-repeat" items="{{sortedTransaction.transactions}}" as="transaction">
+                        <hr>
+                        <dl>
+                            <dt>At:</dt>
+                            <dd>{{getFormattedTime(transaction.dateTime)}}</dd>
+                            <dt>[[_toFrom(transaction.amount)]]:</dt>
+                            <dd>{{transaction.counterParty}}</dd>
+                            <dt>Amount:</dt>
+                            <dd>{{transaction.amount}} {{transaction.currency}}</dd>
+                            <dt>Description:</dt>
+                            <dd>{{transaction.description}}</dd>
+                        </dl>
+                    </template>
+                </div>
+            </paper-card>
         </template>
 
         <iron-ajax
