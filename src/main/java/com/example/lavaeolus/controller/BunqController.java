@@ -21,7 +21,7 @@ import java.util.List;
 
 @RequestMapping("/api/accounts/bunq")
 @RestController
-public class BunqController {
+public class BunqController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(BunqController.class);
 
     @Autowired

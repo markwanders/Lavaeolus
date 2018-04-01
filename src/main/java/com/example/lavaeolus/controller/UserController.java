@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @RequestMapping("/api/user")
 @RestController
-public class UserController {
+public class UserController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
@@ -48,7 +48,4 @@ public class UserController {
 
     }
 
-    private User getCurrentUser() {
-        return ((UserAuthentication) SecurityContextHolder.getContext().getAuthentication()).getDetails().getUser();
-    }
 }

@@ -7,6 +7,7 @@ import com.example.lavaeolus.dao.UserRepository;
 import com.example.lavaeolus.dao.domain.Role;
 import com.example.lavaeolus.dao.domain.User;
 import com.google.gson.Gson;
+import com.launchdarkly.client.LDClient;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class LavaeolusConfiguration {
 
     @Value("${lavaeolus.database-url}")
     private String databaseURL;
+
+    @Value("${launchdarkly.sdk-key}")
+    private String launchDarklySDKKey;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -106,5 +110,10 @@ public class LavaeolusConfiguration {
         basicDataSource.setPassword(password);
 
         return basicDataSource;
+    }
+
+    @Bean
+    public LDClient ldClient() {
+        return new LDClient(launchDarklySDKKey);
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 
 @RequestMapping("/api/accounts/ethereum")
 @RestController
-public class EthereumController {
+public class EthereumController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(EthereumController.class);
 
     @Autowired
