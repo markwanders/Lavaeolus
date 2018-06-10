@@ -29,7 +29,7 @@ public class EthereumController {
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity getAccounts() throws IOException {
+    public ResponseEntity getAccounts() {
         LOG.info("Received request on Ethereum accounts endpoint");
 
         List<Account> accounts = ethereumService.getAccounts();
@@ -39,10 +39,10 @@ public class EthereumController {
 
     @RequestMapping(value="/{address}/transactions", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity getTransactions(@PathVariable("address") final String address) throws IOException {
+    public ResponseEntity getTransactions(@PathVariable("address") final String address) {
         LOG.info("Received request on Ethereum transactions endpoint: {}", address);
 
-        List<Transaction> transactions = new ArrayList<>();
+        List<Transaction> transactions = ethereumService.getTransactions(address);
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
