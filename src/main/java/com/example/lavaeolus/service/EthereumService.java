@@ -5,7 +5,8 @@ import com.example.lavaeolus.controller.domain.Transaction;
 import com.example.lavaeolus.dao.CryptoCompareClient;
 import com.example.lavaeolus.dao.EtherScanClient;
 import com.example.lavaeolus.dao.domain.CryptoCompareReply;
-import com.example.lavaeolus.dao.domain.EtherScanReply;
+import com.example.lavaeolus.dao.domain.EtherScanBalance;
+import com.example.lavaeolus.dao.domain.EtherScanTransactions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,11 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class EthereumService implements AccountService {
@@ -39,11 +43,11 @@ public class EthereumService implements AccountService {
             CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
 
             for (String address : addresses) {
-                EtherScanReply etherScanReply = etherScanClient.getBalance(address);
+                EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
 
                 Account account = new Account(Account.AccountType.ethereum);
 
-                BigDecimal etherBalance = new BigDecimal(etherScanReply.getResult()).divide(weiToEtherRatio);
+                BigDecimal etherBalance = new BigDecimal(etherScanBalance.getResult()).divide(weiToEtherRatio);
                 BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
 
                 Account.Identifier identifier = new Account.Identifier();
@@ -74,6 +78,26 @@ public class EthereumService implements AccountService {
 
     @Override
     public List<Transaction> getTransactions(String accountIdentifier) {
-        return null;
+        List<Transaction> transactions = new ArrayList<>();
+
+        try {
+            EtherScanTransactions etherScanTransactions = etherScanClient.getTransactions(accountIdentifier);
+
+            for (EtherScanTransactions.EthereumTransaction ethereumTransaction : etherScanTransactions.getResult()) {
+                Transaction transaction = new Transaction();
+                transaction.setCurrency("ether");
+                transaction.setAmount(new BigDecimal(ethereumTransaction.getValue()).divide(weiToEtherRatio));
+                transaction.setDescription("Block: #" + ethereumTransaction.getBlockNumber());
+                transaction.setCounterParty(ethereumTransaction.getFrom().equals(accountIdentifier) ? ethereumTransaction.getTo() : ethereumTransaction.getFrom());
+                transaction.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(new Long(ethereumTransaction.getTimeStamp())),
+                        TimeZone.getDefault().toZoneId()));
+                transactions.add(transaction);
+            }
+        } catch (Exception e) {
+            LOG.error("Something went wrong fetching Ethereum transactions: {}", e);
+
+        }
+
+        return transactions;
     }
 }

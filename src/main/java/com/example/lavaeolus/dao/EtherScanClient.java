@@ -1,6 +1,7 @@
 package com.example.lavaeolus.dao;
 
-import com.example.lavaeolus.dao.domain.EtherScanReply;
+import com.example.lavaeolus.dao.domain.EtherScanBalance;
+import com.example.lavaeolus.dao.domain.EtherScanTransactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class EtherScanClient {
     @Value("${etherscan.api-key}")
     private String apiKey;
 
-    public EtherScanReply getBalance(String address) {
+    public EtherScanBalance getBalance(String address) {
         String requestURL = ETHERSCAN_URL + "?module=account&action=balance&tag=latest&address=" + address + "&apikey=" + apiKey;
 
         LOG.info("Sending request to {}", requestURL);
@@ -33,10 +34,26 @@ public class EtherScanClient {
         LOG.info("Received response: {}", responseEntity);
 
         try {
-            return new ObjectMapper().readValue(responseEntity.getBody(), EtherScanReply.class);
+            return new ObjectMapper().readValue(responseEntity.getBody(), EtherScanBalance.class);
         } catch (IOException e) {
-            LOG.error("An error occurred mapping the JSON response to an EtherScanReply: ", e);
-            return new EtherScanReply();
+            LOG.error("An error occurred mapping the JSON response to an EtherScanBalance: ", e);
+            return new EtherScanBalance();
+        }
+    }
+
+    public EtherScanTransactions getTransactions(String address) {
+        String requestURL = ETHERSCAN_URL + "?module=account&action=txlist&sort=asc&address=" + address + "&apikey=" + apiKey;
+
+        LOG.info("Sending request to {}", requestURL);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(requestURL, String.class);
+
+        LOG.info("Received response: {}", responseEntity);
+
+        try {
+            return new ObjectMapper().readValue(responseEntity.getBody(), EtherScanTransactions.class);
+        } catch (IOException e) {
+            LOG.error("An error occurred mapping the JSON response to an EtherScanBalance: ", e);
+            return new EtherScanTransactions();
         }
     }
 }
