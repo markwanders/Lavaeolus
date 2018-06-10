@@ -37,7 +37,7 @@ public class BunqService implements AccountService {
                 accounts.add(account);
             }
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Bunq accounts: {}", e);
+            LOG.error("Something went wrong fetching Bunq accounts: ", e);
         }
 
         return accounts;
@@ -65,7 +65,7 @@ public class BunqService implements AccountService {
                 transactions.add(transaction);
             }
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Bunq transactions: {}", e);
+            LOG.error("Something went wrong fetching Bunq transactions: ", e);
         }
 
         return transactions;

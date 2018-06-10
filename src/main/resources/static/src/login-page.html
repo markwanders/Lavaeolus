@@ -37,21 +37,38 @@
         </style>
 
         <paper-material class="login" elevation="3">
-            <h1>Log in</h1>
-            <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-            <iron-form id="form">
-                <form method="post" action="/login">
-                    <paper-input value={{username}} label="Username" name="username" required
-                                 autofocus></paper-input>
-                    <paper-input value="{{password}}" label="Password" name="password"
-                                 type="password" required></paper-input>
-                    <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
-                    <div class="wrapper-btns">
-                        <paper-button id="login-button" class="primary" on-tap="_logIn" raised>Login</paper-button>
-                        <paper-button on-tap="_register">Sign Up</paper-button>
-                    </div>
-                </form>
-            </iron-form>
+            <div hidden="[[isSignUp]]">
+                <h1>Log in</h1>
+                <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
+                <iron-form id="login" >
+                    <form method="post" action="/login">
+                        <paper-input value={{username}} label="Username" name="username" required
+                                     autofocus></paper-input>
+                        <paper-input value="{{password}}" label="Password" name="password"
+                                     type="password" required></paper-input>
+                        <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
+                        <div class="wrapper-btns">
+                            <paper-button id="login-button" class="primary" on-tap="_logIn" raised>Login</paper-button>
+                            <paper-button on-tap="_register">Sign Up</paper-button>
+                        </div>
+                    </form>
+                </iron-form>
+            </div>
+            <div hidden="[[!isSignUp]]">
+                <h1>Sign up</h1>
+                <iron-form id="signup">
+                    <form method="post" action="/register">
+                        <paper-input value={{username}} label="Username" name="username" required
+                                     autofocus></paper-input>
+                        <paper-input value="{{password}}" label="Password" name="password"
+                                     type="password" required></paper-input>
+                        <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
+                        <div class="wrapper-btns">
+                            <paper-button class="primary" on-tap="_register" raised>Sign Up</paper-button>
+                        </div>
+                    </form>
+                </iron-form>
+            </div>
         </paper-material>
     </template>
     <script>
@@ -63,6 +80,10 @@
       properties: {
         username: String,
         password: String,
+        isSignUp: {
+            type: Boolean,
+            value: false
+        },
         errorMessage: String,
         token: {
           type: String,
@@ -82,7 +103,15 @@
       },
 
       _logIn: function() {
-        this.$.form.submit();
+        this.$.login.submit();
+      },
+
+      _register: function() {
+        if(this.isSignUp) {
+            this.$.signup.submit();
+        } else {
+            this.isSignUp = true;
+        }
       },
 
       _handleLoginSuccess: function(evt) {

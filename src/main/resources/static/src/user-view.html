@@ -31,27 +31,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         </style>
 
+        <div hidden="[[showUserErrorMessage]]">
+            <iron-form id="form" headers="{{headers}}">
+                <form method="post" action="/api/user" >
+                    <paper-card class="card" heading="{{user.username}}">
+                        <div class="card-content">
+                            <div class="circle">{{user.id}}</div>
+                            <p>Role: {{user.role}}</p>
 
-        <iron-form id="form" headers="{{headers}}">
-            <form method="post" action="/api/user" >
-                <paper-card class="card" heading="{{user.username}}">
-                    <div class="card-content">
-                        <div class="circle">{{user.id}}</div>
-                        <p>Role: {{user.role}}</p>
+                            <paper-input value="{{newPassword}}" label="New password" name="newPassword"
+                                         type="password" required></paper-input>
+                            <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
+                                         type="password" required on-change="_passwordMatch"></paper-input>
+                            <span class="error-message">[[errorMessage]]</span>
+                            <span class="success-message">[[successMessage]]</span>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button id="change-password" on-tap="_submit">Change password</paper-button>
+                        </div>
+                    </paper-card>
+                </form>
+            </iron-form>
+        </div>
 
-                        <paper-input value="{{newPassword}}" label="New password" name="newPassword"
-                                     type="password" required></paper-input>
-                        <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
-                                     type="password" required on-change="_passwordMatch"></paper-input>
-                        <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
-                        <span class="success-message" hidden="[[!successMessage]]">[[successMessage]]</span>
-                    </div>
-                    <div class="card-actions">
-                        <paper-button id="change-password" on-tap="_submit">Change password</paper-button>
-                    </div>
-                </paper-card>
-            </form>
-        </iron-form>
+        <div hidden="[[!showUserErrorMessage]]">
+            <paper-card class="card">
+                <div class="card-content">
+                    <span class="error-message">[[userErrorMessage]]</span>
+                </div>
+            </paper-card>
+        </div>
+
 
         <iron-ajax
                 id="user"
@@ -61,7 +71,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 content-type="application/json"
                 handle-as="json"
                 loading="{{loading}}"
-                last-response="{{user}}">
+                last-response="{{user}}"
+                on-error="_handleUserError">
         </iron-ajax>
     </template>
 
@@ -72,6 +83,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         static get properties() {
             return {
                 user: Object,
+                showUserErrorMessage: {
+                    type: Boolean,
+                    value: false
+                },
                 loading: {
                       type: Boolean,
                       notify: true
@@ -107,6 +122,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             if(this.token){
                 this.go();
             }
+        }
+
+        _handleUserError() {
+            this.showUserErrorMessage = true;
+            this.userErrorMessage = 'Something went wrong.'
         }
 
         _handleChangePasswordError() {

@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @RequestMapping("/api/user")
 @RestController
 public class UserController {
@@ -28,7 +26,7 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity getUser() throws IOException {
+    public ResponseEntity getUser() {
         LOG.info("Received request on getUser endpoint");
 
         User user = tokenUserDetailsService.loadUserByUsername(getCurrentUser().getUsername()).getUser();
@@ -37,9 +35,9 @@ public class UserController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(method = RequestMethod.PATCH, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity changePassword(@RequestParam(value="newPassword") String newPassword) throws IOException {
+    public ResponseEntity changePassword(@RequestParam(value="newPassword") String newPassword) {
         LOG.info("Received request on changePassword endpoint");
 
         User user = tokenUserDetailsService.changePasswordByUsername(getCurrentUser().getUsername(), newPassword).getUser();

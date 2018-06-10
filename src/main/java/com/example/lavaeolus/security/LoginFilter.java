@@ -28,7 +28,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws AuthenticationException {
         LOG.info("Attempting authentication: {}", httpServletRequest.getParameter("username"));
         return getAuthenticationManager()
                 .authenticate(new UsernamePasswordAuthenticationToken(
@@ -37,7 +37,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain chain, Authentication authentication) throws IOException, ServletException {
+                                            FilterChain chain, Authentication authentication) {
         LOG.info("Successful authentication: {}", authentication);
         tokenAuthenticationService.addAuthentication(response, (TokenUser) authentication.getPrincipal());
         SecurityContextHolder.getContext().setAuthentication(authentication);

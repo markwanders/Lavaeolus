@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class TokenAuthenticationService {
@@ -24,12 +26,12 @@ public class TokenAuthenticationService {
     @Value("${lavaeolus.token.secret}")
     private String secret;
 
-    public void addAuthentication(HttpServletResponse response, TokenUser tokenUser) {
+    void addAuthentication(HttpServletResponse response, TokenUser tokenUser) {
         String token = createTokenForUser(tokenUser);
         response.addHeader(AUTH_HEADER_NAME, token);
     }
 
-    public Authentication getAuthentication(HttpServletRequest request) {
+    Authentication getAuthentication(HttpServletRequest request) {
         final String token = request.getHeader(AUTH_HEADER_NAME);
         if (token != null && !token.isEmpty()) {
             final TokenUser user = parseUserFromToken(token);
@@ -53,6 +55,12 @@ public class TokenAuthenticationService {
                 .setSubject(toJSON(user))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    Map<String, String> createTokenHeaderForUser(TokenUser user) {
+        Map<String, String> header = new HashMap<>();
+        header.put(AUTH_HEADER_NAME, createTokenForUser(user));
+        return header;
     }
 
     private User fromJSON(final String userJSON) {

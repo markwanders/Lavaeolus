@@ -13,6 +13,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Column(unique=true)
     private String username;
 
     // Default to empty string for Auths created by JWT requests
