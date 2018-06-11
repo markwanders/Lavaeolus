@@ -38,7 +38,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <div class="card-content">
                             <div class="circle">{{user.id}}</div>
                             <p>Role: {{user.role}}</p>
-
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
                                          type="password" required></paper-input>
                             <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
@@ -134,7 +133,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         _handleChangePasswordSuccess() {
-            this.errorMessage = 'Successfully changed password.'
+            this.newPassword = this.confirmNewPassword = '';
+            this.successMessage = 'Successfully changed password.'
         }
 
         _getHeader(token) {
