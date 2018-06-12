@@ -75,7 +75,7 @@ public class LavaeolusConfiguration {
             private UserRepository userRepository;
 
             @Override
-            public void afterPropertiesSet() throws Exception {
+            public void afterPropertiesSet() {
                 //Add default user if not already present
                 if(!userRepository.findOneByUsername(DEFAULT_USER).isPresent()) {
                     addUser(DEFAULT_USER, DEFAULT_PASSWORD);
