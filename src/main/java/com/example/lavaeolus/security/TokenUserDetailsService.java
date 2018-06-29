@@ -1,8 +1,9 @@
 package com.example.lavaeolus.security;
 
-import com.example.lavaeolus.dao.UserRepository;
-import com.example.lavaeolus.dao.domain.Role;
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.database.UserRepository;
+import com.example.lavaeolus.database.domain.Role;
+import com.example.lavaeolus.database.domain.User;
+import com.example.lavaeolus.security.domain.TokenUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;

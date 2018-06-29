@@ -1,4 +1,4 @@
-package com.example.lavaeolus.dao.domain;
+package com.example.lavaeolus.database.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,8 +30,10 @@ public class User {
     @JsonProperty("bunqKey")
     public String getObfuscatedBunqKey() {
         //Obfuscate secrets in API response
-        int length = this.bunqKey.length();
-        return StringUtils.repeat("*", length - 4) + this.bunqKey.substring(length - 4, length);
+        if(this.bunqKey != null) {
+            int length = this.bunqKey.length();
+            return StringUtils.repeat("*", length - 4) + this.bunqKey.substring(length - 4, length);
+        } else return null;
     }
 
     public String getUsername() {

@@ -2,11 +2,11 @@ package com.example.lavaeolus.service;
 
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.controller.domain.Transaction;
-import com.example.lavaeolus.dao.CryptoCompareClient;
-import com.example.lavaeolus.dao.EtherScanClient;
-import com.example.lavaeolus.dao.domain.CryptoCompareReply;
-import com.example.lavaeolus.dao.domain.EtherScanBalance;
-import com.example.lavaeolus.dao.domain.EtherScanTransactions;
+import com.example.lavaeolus.client.CryptoCompareClient;
+import com.example.lavaeolus.client.EtherScanClient;
+import com.example.lavaeolus.client.domain.CryptoCompareReply;
+import com.example.lavaeolus.client.domain.EtherScanBalance;
+import com.example.lavaeolus.client.domain.EtherScanTransactions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,7 +5,7 @@ import com.bunq.sdk.model.generated.endpoint.Payment;
 import com.bunq.sdk.model.generated.object.Pointer;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.controller.domain.Transaction;
-import com.example.lavaeolus.dao.BunqClient;
+import com.example.lavaeolus.client.BunqClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

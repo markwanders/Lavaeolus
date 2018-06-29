@@ -1,6 +1,7 @@
 package com.example.lavaeolus.security;
 
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.database.domain.User;
+import com.example.lavaeolus.security.domain.TokenUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;

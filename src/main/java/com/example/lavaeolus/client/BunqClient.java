@@ -1,4 +1,4 @@
-package com.example.lavaeolus.dao;
+package com.example.lavaeolus.client;
 
 import com.bunq.sdk.context.ApiContext;
 import com.bunq.sdk.http.BunqResponse;

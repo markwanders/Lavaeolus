@@ -1,7 +1,7 @@
-package com.example.lavaeolus.dao;
+package com.example.lavaeolus.client;
 
-import com.example.lavaeolus.dao.domain.EtherScanBalance;
-import com.example.lavaeolus.dao.domain.EtherScanTransactions;
+import com.example.lavaeolus.client.domain.EtherScanBalance;
+import com.example.lavaeolus.client.domain.EtherScanTransactions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

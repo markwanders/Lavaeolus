@@ -1,6 +1,6 @@
-package com.example.lavaeolus.dao;
+package com.example.lavaeolus.database;
 
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.database.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

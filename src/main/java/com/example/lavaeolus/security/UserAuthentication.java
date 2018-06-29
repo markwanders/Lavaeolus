@@ -1,5 +1,6 @@
 package com.example.lavaeolus.security;
 
+import com.example.lavaeolus.security.domain.TokenUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,6 +1,6 @@
 package com.example.lavaeolus.controller;
 
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.TokenUserDetailsService;
 import com.example.lavaeolus.security.UserAuthentication;
 import org.slf4j.Logger;

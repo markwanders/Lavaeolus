@@ -38,7 +38,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <div class="card-content">
                             <div class="circle">{{user.id}}</div>
                             <p>Role: {{user.role}}</p>
-                            <span>Bunq API key: {{user.bunqKey</span>
+                            <template dom-if="{{user.bunqKey}}">
+                                <span>Bunq API key: {{user.bunqKey}}</span>
+                            </template>
                             <h3>Change settings</h3>
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
                                          type="password" required></paper-input>
@@ -75,6 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 handle-as="json"
                 loading="{{loading}}"
                 last-response="{{user}}"
+                last-error="{{error}}"
                 on-error="_handleUserError">
         </iron-ajax>
     </template>
@@ -86,6 +89,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         static get properties() {
             return {
                 user: Object,
+                error: Object,
                 showUserErrorMessage: {
                     type: Boolean,
                     value: false
@@ -129,7 +133,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _handleUserError() {
             this.showUserErrorMessage = true;
-            this.userErrorMessage = 'Something went wrong.'
+            this.userErrorMessage = 'Something went wrong.';
+            if(this.error.status === 403) {
+                this.token = "";
+            }
         }
 
         _handleChangePasswordError() {

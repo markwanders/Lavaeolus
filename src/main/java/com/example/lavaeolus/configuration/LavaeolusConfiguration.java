@@ -3,9 +3,9 @@ package com.example.lavaeolus.configuration;
 import com.bunq.sdk.context.ApiContext;
 import com.bunq.sdk.context.ApiEnvironmentType;
 import com.bunq.sdk.json.BunqGsonBuilder;
-import com.example.lavaeolus.dao.UserRepository;
-import com.example.lavaeolus.dao.domain.Role;
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.database.UserRepository;
+import com.example.lavaeolus.database.domain.Role;
+import com.example.lavaeolus.database.domain.User;
 import com.google.gson.Gson;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
@@ -78,15 +78,15 @@ public class LavaeolusConfiguration {
             public void afterPropertiesSet() {
                 //Add default user if not already present
                 if(!userRepository.findOneByUsername(DEFAULT_USER).isPresent()) {
-                    addUser(DEFAULT_USER, DEFAULT_PASSWORD);
+                    addUser();
                 }
             }
 
-            private void addUser(String username, String password) {
+            private void addUser() {
                 User user = new User();
-                user.setUsername(username);
-                user.setPassword(new BCryptPasswordEncoder().encode(password));
-                user.setRole(username.equals(DEFAULT_USER) ? Role.ADMIN : Role.USER);
+                user.setUsername(DEFAULT_USER);
+                user.setPassword(new BCryptPasswordEncoder().encode(DEFAULT_PASSWORD));
+                user.setRole(Role.ADMIN);
                 userRepository.save(user);
             }
         };

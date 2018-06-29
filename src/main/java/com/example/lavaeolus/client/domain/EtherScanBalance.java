@@ -1,7 +1,6 @@
-package com.example.lavaeolus.dao.domain;
+package com.example.lavaeolus.client.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
