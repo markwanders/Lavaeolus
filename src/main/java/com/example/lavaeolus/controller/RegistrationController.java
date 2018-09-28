@@ -24,7 +24,7 @@ public class RegistrationController {
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseEntity registerUser(final User newUser) {
-        LOG.info("Received request on registerUser endpoint");
+        LOG.info("Received request on registerUser endpoint: {}", newUser);
 
         MultiValueMap<String, String> tokenHeader = new HttpHeaders();
         tokenHeader.setAll(tokenUserDetailsService.registerNewUserAndReturnTokenHeader(newUser.getUsername(), newUser.getPassword()));

@@ -35,12 +35,18 @@ public class UserController {
 
     }
 
-    @RequestMapping(method = RequestMethod.PATCH, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity changePassword(@RequestParam(value="newPassword") String newPassword) {
-        LOG.info("Received request on changePassword endpoint");
+    public ResponseEntity changeSettings(@RequestParam(value="newPassword") String newPassword, @RequestParam(value="newBunqKey") String newBunqKey) {
+        LOG.info("Received request on changeSettings endpoint");
+        User user = null;
 
-        User user = tokenUserDetailsService.changePasswordByUsername(getCurrentUser().getUsername(), newPassword).getUser();
+        if(newPassword != null) {
+            user = tokenUserDetailsService.changePasswordByUsername(getCurrentUser().getUsername(), newPassword).getUser();
+        }
+        if(newBunqKey != null) {
+            user = tokenUserDetailsService.changeBunqKeyByUsername(getCurrentUser().getUsername(), newBunqKey).getUser();
+        }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
 

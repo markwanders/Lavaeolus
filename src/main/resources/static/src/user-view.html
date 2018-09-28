@@ -46,13 +46,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                          type="password" required></paper-input>
                             <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
                                          type="password" required on-change="_passwordMatch"></paper-input>
-                            <paper-input value="{{newBunqKey}}" label="New Bunq key"
-                                         type="password"></paper-input>
+                            <paper-input value="{{newBunqKey}}" label="New Bunq key" name="newBunqKey"></paper-input>
                             <span class="error-message">[[errorMessage]]</span>
                             <span class="success-message">[[successMessage]]</span>
                         </div>
                         <div class="card-actions">
-                            <paper-button id="change-password" on-tap="_submit">Change password</paper-button>
+                            <paper-button id="change-password" on-tap="_submit">Change settings</paper-button>
                         </div>
                     </paper-card>
                 </form>
@@ -66,7 +65,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </div>
             </paper-card>
         </div>
-
 
         <iron-ajax
                 id="user"

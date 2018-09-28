@@ -45,6 +45,18 @@ public class TokenUserDetailsService implements UserDetailsService {
         return tokenUser;
     }
 
+    public TokenUser changeBunqKeyByUsername(String username, String newBunqKey) throws UsernameNotFoundException {
+        final User user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
+
+        TokenUser tokenUser = new TokenUser(user);
+        accountStatusUserDetailsChecker.check(tokenUser);
+
+        user.setBunqKey(newBunqKey);
+        tokenUser = new TokenUser(userRepository.save(user));
+
+        return tokenUser;
+    }
+
     public Map<String,String> registerNewUserAndReturnTokenHeader(String username, String password) {
         User user = new User();
         user.setUsername(username);
