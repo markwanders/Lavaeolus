@@ -30,7 +30,7 @@ public class User {
     @JsonProperty("bunqKey")
     public String getObfuscatedBunqKey() {
         //Obfuscate secrets in API response
-        if(this.bunqKey != null) {
+        if(this.bunqKey != null && !this.bunqKey.isEmpty()) {
             int length = this.bunqKey.length();
             return StringUtils.repeat("*", length - 4) + this.bunqKey.substring(length - 4, length);
         } else return null;

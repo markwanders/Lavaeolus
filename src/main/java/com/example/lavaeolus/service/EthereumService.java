@@ -7,6 +7,7 @@ import com.example.lavaeolus.client.EtherScanClient;
 import com.example.lavaeolus.client.domain.CryptoCompareReply;
 import com.example.lavaeolus.client.domain.EtherScanBalance;
 import com.example.lavaeolus.client.domain.EtherScanTransactions;
+import com.example.lavaeolus.database.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class EthereumService implements AccountService {
     @Value("${etherscan.address}")
     private String[] addresses;
 
-    public List<Account> getAccounts() {
+    public List<Account> getAccounts(User user) {
         List<Account> accounts = new ArrayList<>();
 
         try {
@@ -77,7 +78,7 @@ public class EthereumService implements AccountService {
     }
 
     @Override
-    public List<Transaction> getTransactions(String accountIdentifier) {
+    public List<Transaction> getTransactions(User user, String accountIdentifier) {
         List<Transaction> transactions = new ArrayList<>();
 
         try {

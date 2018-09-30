@@ -1,8 +1,10 @@
 package com.example.lavaeolus.controller;
 
 import com.example.lavaeolus.controller.domain.Account;
+import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.service.BunqService;
 import com.example.lavaeolus.service.EthereumService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import java.util.List;
 
 @RequestMapping("/api/accounts")
 @RestController
-public class AccountsController {
+public class AccountsController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AccountsController.class);
 
     @Autowired
@@ -32,11 +34,12 @@ public class AccountsController {
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity getAccounts() throws IOException {
-        LOG.info("Received request on getAccounts endpoint");
+        final User currentUser = getCurrentUser();
+        LOG.info("Received request on getAccounts endpoint for user: {}", currentUser);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.addAll(bunqService.getAccounts());
-        accounts.addAll(ethereumService.getAccounts());
+        accounts.addAll(bunqService.getAccounts(currentUser));
+        accounts.addAll(ethereumService.getAccounts(currentUser));
 
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }

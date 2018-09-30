@@ -57,16 +57,17 @@ public class TokenUserDetailsService implements UserDetailsService {
         return tokenUser;
     }
 
-    public Map<String,String> registerNewUserAndReturnTokenHeader(String username, String password) {
+    public Map<String, String> registerNewUserAndReturnTokenHeader(String username, String password) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
         user.setRole(Role.USER);
         user = userRepository.save(user);
 
-        TokenUser tokenUser = new TokenUser(user);
+        return createTokenHeader(user);
+    }
 
-        return tokenAuthenticationService.createTokenHeaderForUser(tokenUser);
-
+    public Map<String, String> createTokenHeader(User user) {
+        return tokenAuthenticationService.createTokenHeaderForUser(new TokenUser(user));
     }
 }

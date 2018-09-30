@@ -24,10 +24,8 @@ public class BunqClient {
      */
     private static final int PAGE_SIZE = 10;
 
-    @Autowired
-    private ApiContext apiContext;
-
-    public List<MonetaryAccount> fetchAccounts() {
+    public List<MonetaryAccount> fetchAccounts(ApiContext apiContext) {
+        LOG.debug("Fetching accounts: {}", apiContext);
         List<MonetaryAccount> monetaryAccounts = MonetaryAccount.list(
                 apiContext,
                 getUserID(apiContext)
@@ -38,7 +36,8 @@ public class BunqClient {
         return monetaryAccounts;
     }
 
-    public List<Payment> fetchPayments(Integer accountID) {
+    public List<Payment> fetchPayments(ApiContext apiContext, Integer accountID) {
+        LOG.debug("Fetching payments: {} {}", apiContext, accountID);
 
         Pagination paginationCountOnly = new Pagination();
         paginationCountOnly.setCount(PAGE_SIZE);

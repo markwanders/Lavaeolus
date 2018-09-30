@@ -21,7 +21,7 @@ import java.util.List;
 
 @RequestMapping("/api/accounts/bunq")
 @RestController
-public class BunqController {
+public class BunqController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(BunqController.class);
 
     @Autowired
@@ -32,7 +32,7 @@ public class BunqController {
     public ResponseEntity getAccounts() throws IOException {
         LOG.info("Received request on Bunq accounts endpoint");
 
-        List<Account> accounts = bunqService.getAccounts();
+        List<Account> accounts = bunqService.getAccounts(getCurrentUser());
 
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class BunqController {
     public ResponseEntity getTransactions(@PathVariable("id") final String id) throws IOException {
         LOG.info("Received request on Bunq transactions endpoint");
 
-        List<Transaction> transactions = new ArrayList<>(bunqService.getTransactions(id));
+        List<Transaction> transactions = new ArrayList<>(bunqService.getTransactions(getCurrentUser(), id));
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }

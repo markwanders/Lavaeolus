@@ -37,10 +37,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     <paper-card class="card" heading="{{user.username}}">
                         <div class="card-content">
                             <div class="circle">{{user.id}}</div>
-                            <p>Role: {{user.role}}</p>
-                            <template dom-if="{{user.bunqKey}}">
-                                <span>Bunq API key: {{user.bunqKey}}</span>
-                            </template>
+                            <dl>
+                                <dt>Role</dt><dd>{{user.role}}</dd>
+                                <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt><dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}}</dd>
+                            </dl>
                             <h3>Change settings</h3>
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
                                          type="password" required></paper-input>
@@ -108,11 +108,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
         }
 
-        static get listeners() {
-            return {
-                'iron-form-response': '_handleChangePasswordSuccess',
-                'iron-form-error': '_handleChangePasswordError'
-            }
+        ready() {
+            super.ready();
+            this.$.form.addEventListener('iron-form-response', this._handleChangePasswordSuccess.bind(this));
+            this.$.form.addEventListener('iron-form-error', this._handleChangePasswordError.bind(this));
+
         }
 
         go() {
@@ -141,9 +141,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.errorMessage = 'You are doing it wrong.'
         }
 
-        _handleChangePasswordSuccess() {
+        _handleChangePasswordSuccess(e) {
             this.newPassword = this.confirmNewPassword = '';
             this.successMessage = 'Successfully changed password.'
+            this.token = e.detail.xhr.getResponseHeader('x-auth-token');
         }
 
         _getHeader(token) {
