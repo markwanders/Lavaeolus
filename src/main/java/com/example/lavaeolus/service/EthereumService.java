@@ -71,7 +71,7 @@ public class EthereumService implements AccountService {
             }
 
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Ethereum accounts: {}", e);
+            LOG.error("Something went wrong fetching Ethereum accounts: ", e);
         }
 
         return accounts;

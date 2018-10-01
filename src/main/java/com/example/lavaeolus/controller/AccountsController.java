@@ -4,7 +4,6 @@ import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.service.BunqService;
 import com.example.lavaeolus.service.EthereumService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,9 @@ public class AccountsController extends AbstractController {
         LOG.info("Received request on getAccounts endpoint for user: {}", currentUser);
 
         List<Account> accounts = new ArrayList<>();
-        accounts.addAll(bunqService.getAccounts(currentUser));
+        if(currentUser.getBunqKey() != null && !currentUser.getBunqKey().isEmpty()) {
+            accounts.addAll(bunqService.getAccounts(currentUser));
+        }
         accounts.addAll(ethereumService.getAccounts(currentUser));
 
         return new ResponseEntity<>(accounts, HttpStatus.OK);
