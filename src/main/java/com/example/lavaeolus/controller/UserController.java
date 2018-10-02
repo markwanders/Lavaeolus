@@ -31,10 +31,12 @@ public class UserController extends AbstractController {
     public ResponseEntity getUser() {
         LOG.info("Received request on getUser endpoint");
 
-        User user = tokenUserDetailsService.loadUserByUsername(getCurrentUser().getUsername()).getUser();
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
-
+        User user = getCurrentUser();
+        if(user == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } else {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
