@@ -34,16 +34,13 @@ public class EthereumService implements AccountService {
     @Autowired
     private CryptoCompareClient cryptoCompareClient;
 
-    @Value("${etherscan.address}")
-    private String[] addresses;
-
     public List<Account> getAccounts(User user) {
         List<Account> accounts = new ArrayList<>();
 
         try {
             CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
 
-            for (String address : addresses) {
+            for (String address : user.getEthereumAddresses()) {
                 EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
 
                 Account account = new Account(Account.AccountType.ethereum);
@@ -95,7 +92,7 @@ public class EthereumService implements AccountService {
                 transactions.add(transaction);
             }
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Ethereum transactions: {}", e);
+            LOG.error("Something went wrong fetching Ethereum transactions: ", e);
 
         }
 
