@@ -1,17 +1,16 @@
 package com.example.lavaeolus.service;
 
-import com.example.lavaeolus.controller.domain.Account;
-import com.example.lavaeolus.controller.domain.Transaction;
 import com.example.lavaeolus.client.CryptoCompareClient;
 import com.example.lavaeolus.client.EtherScanClient;
 import com.example.lavaeolus.client.domain.CryptoCompareReply;
 import com.example.lavaeolus.client.domain.EtherScanBalance;
 import com.example.lavaeolus.client.domain.EtherScanTransactions;
+import com.example.lavaeolus.controller.domain.Account;
+import com.example.lavaeolus.controller.domain.Transaction;
 import com.example.lavaeolus.database.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,10 +36,11 @@ public class EthereumService implements AccountService {
     public List<Account> getAccounts(User user) {
         List<Account> accounts = new ArrayList<>();
 
-        try {
-            CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
+        CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
 
-            for (String address : user.getEthereumAddresses()) {
+
+        for (String address : user.getEthereumAddresses()) {
+            try {
                 EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
 
                 Account account = new Account(Account.AccountType.ethereum);
@@ -65,10 +65,9 @@ public class EthereumService implements AccountService {
                 account.addBalance(balanceInEuro);
 
                 accounts.add(account);
+            } catch (Exception e) {
+                LOG.error("Something went wrong fetching Ethereum account {}: ", address, e);
             }
-
-        } catch (Exception e) {
-            LOG.error("Something went wrong fetching Ethereum accounts: ", e);
         }
 
         return accounts;

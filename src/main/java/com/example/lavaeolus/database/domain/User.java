@@ -89,7 +89,6 @@ public class User {
             this.ethereumAddresses = new ArrayList<>();
         }
         return this.ethereumAddresses;
-
     }
 
     public void setEthereumAddresses(ArrayList<String> ethereumAddresses) {

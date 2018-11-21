@@ -46,6 +46,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <dd>{{user.role}}</dd>
                                 <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt>
                                 <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}}</dd>
+                                <dt hidden$="[[!user.ethereumAddresses]]">Ethereum addresses</dt>
+                                <template is="dom-repeat" items="{{user.ethereumAddresses}}">
+                                    <dd>{{item}}</dd>
+                                </template>
+
                             </dl>
                             <h3>Change settings</h3>
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
