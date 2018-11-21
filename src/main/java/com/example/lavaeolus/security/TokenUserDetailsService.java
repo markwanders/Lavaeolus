@@ -1,5 +1,6 @@
 package com.example.lavaeolus.security;
 
+import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.UserRepository;
 import com.example.lavaeolus.database.domain.Role;
 import com.example.lavaeolus.database.domain.User;
@@ -45,13 +46,20 @@ public class TokenUserDetailsService implements UserDetailsService {
         return tokenUser;
     }
 
-    public TokenUser changeBunqKeyByUsername(String username, String newBunqKey) throws UsernameNotFoundException {
+    public TokenUser changeKeyByUsername(String username, String newKey, Account.AccountType accountType) throws UsernameNotFoundException {
         final User user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
 
         TokenUser tokenUser = new TokenUser(user);
         accountStatusUserDetailsChecker.check(tokenUser);
 
-        user.setBunqKey(newBunqKey);
+        switch (accountType) {
+            case bunq:
+                user.setBunqKey(newKey);
+                break;
+            case ethereum:
+                user.getEthereumAddresses().add(newKey);
+                break;
+        }
         tokenUser = new TokenUser(userRepository.save(user));
 
         return tokenUser;

@@ -1,8 +1,8 @@
 package com.example.lavaeolus.controller;
 
+import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.TokenUserDetailsService;
-import com.example.lavaeolus.security.UserAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,19 +38,17 @@ public class UserController extends AbstractController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(path = "/password", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity changeSettings(@RequestParam(value="newPassword") String newPassword, @RequestParam(value="newBunqKey") String newBunqKey) {
-        LOG.info("Received request on changeSettings endpoint");
+    public ResponseEntity changePassword(@RequestParam(value="newPassword") String newPassword) {
+        LOG.info("Received request on changePassword endpoint");
         User user = null;
 
-        if(newPassword != null && !newPassword.isEmpty()) {
+        if(newPassword != null && !newPassword.isEmpty() && newPassword.length() >= 8) {
             LOG.debug("Updating password");
             user = tokenUserDetailsService.changePasswordByUsername(getCurrentUser().getUsername(), newPassword).getUser();
-        }
-        if(newBunqKey != null && !newBunqKey.isEmpty()) {
-            LOG.debug("Updating Bunq key");
-            user = tokenUserDetailsService.changeBunqKeyByUsername(getCurrentUser().getUsername(), newBunqKey).getUser();
+        } else {
+            throw new IllegalArgumentException("New password is invalid");
         }
 
         MultiValueMap<String, String> tokenHeader = new HttpHeaders();
@@ -61,4 +58,23 @@ public class UserController extends AbstractController {
 
     }
 
+    @RequestMapping(path = "/account", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity addAccount(@RequestParam(value="newKey") String newKey , @RequestParam(value = "accountType") String accountType) {
+        LOG.info("Received request on addAccount endpoint: {}", accountType);
+        User user = null;
+
+        if(newKey != null && !newKey.isEmpty()) {
+            LOG.debug("Adding key");
+            user = tokenUserDetailsService.changeKeyByUsername(getCurrentUser().getUsername(), newKey, Account.AccountType.valueOf(accountType.toLowerCase())).getUser();
+        } else {
+            throw new IllegalArgumentException("New key is invalid");
+        }
+
+        MultiValueMap<String, String> tokenHeader = new HttpHeaders();
+        tokenHeader.setAll(tokenUserDetailsService.createTokenHeader(user));
+
+        return new ResponseEntity<>(user, tokenHeader, HttpStatus.OK);
+
+    }
 }

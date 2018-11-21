@@ -13,6 +13,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="user-view">
@@ -29,29 +32,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           iron-form {
             width: 100%;
           }
+
         </style>
 
         <div hidden="[[showUserErrorMessage]]">
             <iron-form id="form" headers="{{headers}}">
-                <form method="post" action="/api/user" >
+                <form method="post" action="/api/user/password">
                     <paper-card class="card" heading="{{user.username}}">
                         <div class="card-content">
                             <div class="circle">{{user.id}}</div>
                             <dl>
-                                <dt>Role</dt><dd>{{user.role}}</dd>
-                                <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt><dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}}</dd>
+                                <dt>Role</dt>
+                                <dd>{{user.role}}</dd>
+                                <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt>
+                                <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}}</dd>
                             </dl>
                             <h3>Change settings</h3>
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
                                          type="password" required></paper-input>
                             <paper-input value="{{confirmNewPassword}}" label="Confirm new password"
                                          type="password" required on-change="_passwordMatch"></paper-input>
-                            <paper-input value="{{newBunqKey}}" label="New Bunq key" name="newBunqKey"></paper-input>
                             <span class="error-message">[[errorMessage]]</span>
                             <span class="success-message">[[successMessage]]</span>
                         </div>
                         <div class="card-actions">
-                            <paper-button id="change-password" on-tap="_submit">Change settings</paper-button>
+                            <paper-button id="change-password" on-tap="_submit">Change password</paper-button>
+                        </div>
+                    </paper-card>
+                </form>
+            </iron-form>
+            <iron-form id="accountForm" headers="{{headers}}">
+                <form method="post" action="/api/user/account">
+                    <paper-card class="card" heading="Add new account">
+                        <div class="card-content">
+                            <paper-dropdown-menu label="Account type" on-iron-select="_itemSelected" name="accountType">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content">
+                                    <template is="dom-repeat" items="{{accountTypes}}" as="accountType">
+                                        <paper-item data-value="{{accountType}}">{{accountType.name}}</paper-item>
+                                    </template>
+                                </paper-listbox>
+                            </paper-dropdown-menu>
+                            <template is="dom-if" if="{{accountType}}">
+                                <paper-input value="{{newKey}}" label="[[accountType.keyName]]"
+                                             name="newKey"></paper-input>
+                            </template>
+                            <span class="error-message">[[accountErrorMessage]]</span>
+                            <span class="success-message">[[accountSuccessMessage]]</span>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button id="add-account" on-tap="_addAccount">Add account</paper-button>
                         </div>
                     </paper-card>
                 </form>
@@ -88,6 +117,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return {
                 user: Object,
                 error: Object,
+                accountTypes: {
+                    type: Array,
+                    value: [{name: 'Bunq', keyName: 'API key'}, {name: 'Ethereum', keyName: 'Address'}]
+                },
                 showUserErrorMessage: {
                     type: Boolean,
                     value: false
@@ -154,14 +187,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _passwordMatch() {
             var password = encodeURIComponent(this.newPassword);
             var confirmPassword = encodeURIComponent(this.confirmNewPassword);
-            if(password != confirmPassword){
-                this.errorMessage = 'Passwords not equal.'
-            } else {
-                this.errorMessage = ''
+            if(password !== null && password!== undefined && password !== "") {
+                if(password != confirmPassword){
+                    this.errorMessage = 'Passwords not equal.'
+                } else {
+                    this.errorMessage = ''
+                }
             }
+        }
+
+        _itemSelected(item) {
+            this.accountType = item.detail.item.dataValue;
+        }
+
+        _addAccount() {
+            console.log('Adding account of type ' + this.accountType.name + ' with key ' + this.newKey);
+            this.$.accountForm.submit();
+            this.accountSuccessMessage = 'Added account of type ' + this.accountType.name;
         }
     }
 
     window.customElements.define(UserView.is, UserView);
+
     </script>
 </dom-module>

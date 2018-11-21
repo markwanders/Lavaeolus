@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 
 @Entity
-@Table(name="\"User\"")
+@Table(name = "\"User\"")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
@@ -18,7 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(unique=true)
+    @Column(unique = true)
     private String username;
 
     // Default to empty string for Auths created by JWT requests
@@ -33,9 +33,9 @@ public class User {
     @JsonProperty("bunqKey")
     public String getObfuscatedBunqKey() {
         //Obfuscate secrets in API response
-        if(this.bunqKey != null && !this.bunqKey.isEmpty()) {
+        if (this.bunqKey != null && !this.bunqKey.isEmpty()) {
             int length = this.bunqKey.length();
-            return StringUtils.repeat("*", length - 4) + this.bunqKey.substring(length - 4, length);
+            return StringUtils.repeat("*", Math.max(length - 4, length)) + this.bunqKey.substring(Math.max(length - 4, length), length);
         } else return null;
     }
 
@@ -83,9 +83,13 @@ public class User {
     }
 
     @ElementCollection
-    @OneToMany(fetch=FetchType.EAGER, mappedBy = "id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id")
     public ArrayList<String> getEthereumAddresses() {
-        return ethereumAddresses;
+        if (ethereumAddresses == null) {
+            this.ethereumAddresses = new ArrayList<>();
+        }
+        return this.ethereumAddresses;
+
     }
 
     public void setEthereumAddresses(ArrayList<String> ethereumAddresses) {
