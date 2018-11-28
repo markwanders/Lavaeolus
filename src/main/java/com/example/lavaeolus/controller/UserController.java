@@ -12,10 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/user")
 @RestController
@@ -70,6 +67,21 @@ public class UserController extends AbstractController {
         } else {
             throw new IllegalArgumentException("New key is invalid");
         }
+
+        MultiValueMap<String, String> tokenHeader = new HttpHeaders();
+        tokenHeader.setAll(tokenUserDetailsService.createTokenHeader(user));
+
+        return new ResponseEntity<>(user, tokenHeader, HttpStatus.OK);
+
+    }
+
+    @RequestMapping(path = "/account/{accountType}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity deleteAccount(@PathVariable(value = "accountType") String accountType) {
+        //TODO: some sort of verification. People shouldn't be able to accidentally delete accounts this easily
+        LOG.info("Received request on deleteAccount endpoint: {}", accountType);
+
+        User user = tokenUserDetailsService.deleteAccountByUsername(getCurrentUser().getUsername(), Account.AccountType.valueOf(accountType.toLowerCase())).getUser();
 
         MultiValueMap<String, String> tokenHeader = new HttpHeaders();
         tokenHeader.setAll(tokenUserDetailsService.createTokenHeader(user));

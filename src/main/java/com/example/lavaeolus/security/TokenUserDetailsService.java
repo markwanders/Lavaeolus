@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 @Service
@@ -58,6 +59,25 @@ public class TokenUserDetailsService implements UserDetailsService {
                 break;
             case ethereum:
                 user.getEthereumAddresses().add(newKey);
+                break;
+        }
+        tokenUser = new TokenUser(userRepository.save(user));
+
+        return tokenUser;
+    }
+
+    public TokenUser deleteAccountByUsername(String username, Account.AccountType accountType) throws UsernameNotFoundException {
+        final User user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
+
+        TokenUser tokenUser = new TokenUser(user);
+        accountStatusUserDetailsChecker.check(tokenUser);
+
+        switch (accountType) {
+            case bunq:
+                user.setBunqKey(null);
+                break;
+            case ethereum:
+                user.setEthereumAddresses(new ArrayList<>());
                 break;
         }
         tokenUser = new TokenUser(userRepository.save(user));

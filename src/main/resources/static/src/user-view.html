@@ -12,6 +12,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -45,12 +47,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <dt>Role</dt>
                                 <dd>{{user.role}}</dd>
                                 <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt>
-                                <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}}</dd>
+                                <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}} <paper-icon-button icon="icons:delete" on-tap="_deleteBunq"></paper-icon-button></dd>
                                 <dt hidden$="[[!user.ethereumAddresses]]">Ethereum addresses</dt>
                                 <template is="dom-repeat" items="{{user.ethereumAddresses}}">
-                                    <dd>{{item}}</dd>
+                                    <dd>{{item}} <paper-icon-button icon="icons:delete" on-tap="_deleteEth"></paper-icon-button></dd>
                                 </template>
-
                             </dl>
                             <h3>Change settings</h3>
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
@@ -111,6 +112,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 last-response="{{user}}"
                 last-error="{{error}}"
                 on-error="_handleUserError">
+        </iron-ajax>
+
+        <iron-ajax
+                id="delete"
+                headers={{headers}}
+                method="DELETE"
+                content-type="application/json"
+                handle-as="json"
+                loading="{{loading}}"
+                last-error="{{error}}"
+                on-error="_handleDeleteError">
         </iron-ajax>
     </template>
 
@@ -206,9 +218,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         _addAccount() {
-            console.log('Adding account of type ' + this.accountType.name + ' with key ' + this.newKey);
             this.$.accountForm.submit();
             this.accountSuccessMessage = 'Added account of type ' + this.accountType.name;
+        }
+
+        _deleteBunq() {
+            this.$.delete.url = '/api/user/account/bunq';
+            this.$.delete.generateRequest();
+        }
+
+        _deleteEth() {
+            this.$.delete.url = '/api/user/account/ethereum';
+            this.$.delete.generateRequest();
         }
     }
 
