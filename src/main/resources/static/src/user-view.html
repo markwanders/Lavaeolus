@@ -31,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           .wrapper-btns {
             margin-top: 15px;
           }
-          iron-form {
+          form {
             width: 100%;
           }
 
@@ -48,10 +48,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <dd>{{user.role}}</dd>
                                 <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt>
                                 <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}} <paper-icon-button icon="icons:delete" on-tap="_deleteBunq"></paper-icon-button></dd>
-                                <dt hidden$="[[!user.ethereumAddresses]]">Ethereum addresses</dt>
-                                <template is="dom-repeat" items="{{user.ethereumAddresses}}">
-                                    <dd>{{item}} <paper-icon-button icon="icons:delete" on-tap="_deleteEth"></paper-icon-button></dd>
-                                </template>
+                                <dt hidden$="[[!user.ethereumAddress]]">Ethereum address</dt>
+                                <dd hidden$="[[!user.ethereumAddress]]">{{user.ethereumAddress}} <paper-icon-button icon="icons:delete" on-tap="_deleteEth"></paper-icon-button></dd>
                             </dl>
                             <h3>Change settings</h3>
                             <paper-input value="{{newPassword}}" label="New password" name="newPassword"
@@ -122,6 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 handle-as="json"
                 loading="{{loading}}"
                 last-error="{{error}}"
+                on-response="_handleDeleteSuccess"
                 on-error="_handleDeleteError">
         </iron-ajax>
     </template>
@@ -162,7 +161,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             super.ready();
             this.$.form.addEventListener('iron-form-response', this._handleChangePasswordSuccess.bind(this));
             this.$.form.addEventListener('iron-form-error', this._handleChangePasswordError.bind(this));
-
         }
 
         go() {
@@ -220,6 +218,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _addAccount() {
             this.$.accountForm.submit();
             this.accountSuccessMessage = 'Added account of type ' + this.accountType.name;
+            location.reload();
         }
 
         _deleteBunq() {
@@ -230,6 +229,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _deleteEth() {
             this.$.delete.url = '/api/user/account/ethereum';
             this.$.delete.generateRequest();
+        }
+
+        _handleDeleteSuccess() {
+            location.reload();
         }
     }
 

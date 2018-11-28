@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "\"User\"")
@@ -39,8 +38,8 @@ public class User {
         } else return null;
     }
 
-
-    private ArrayList<String> ethereumAddresses;
+    //todo: use private key instead so we can also do payments etc.
+    private String ethereumAddress;
 
     public String getUsername() {
         return username;
@@ -82,16 +81,11 @@ public class User {
         this.bunqKey = bunqKey;
     }
 
-    @ElementCollection
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id")
-    public ArrayList<String> getEthereumAddresses() {
-        if (ethereumAddresses == null) {
-            this.ethereumAddresses = new ArrayList<>();
-        }
-        return this.ethereumAddresses;
+    public String getEthereumAddress() {
+        return ethereumAddress;
     }
 
-    public void setEthereumAddresses(ArrayList<String> ethereumAddresses) {
-        this.ethereumAddresses = ethereumAddresses;
+    public void setEthereumAddress(String ethereumAddress) {
+        this.ethereumAddress = ethereumAddress;
     }
 }

@@ -39,35 +39,34 @@ public class EthereumService implements AccountService {
         CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
 
 
-        for (String address : user.getEthereumAddresses()) {
-            try {
-                EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
+        String address = user.getEthereumAddress();
+        try {
+            EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
 
-                Account account = new Account(Account.AccountType.ethereum);
+            Account account = new Account(Account.AccountType.ethereum);
 
-                BigDecimal etherBalance = new BigDecimal(etherScanBalance.getResult()).divide(weiToEtherRatio);
-                BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal etherBalance = new BigDecimal(etherScanBalance.getResult()).divide(weiToEtherRatio);
+            BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
 
-                Account.Identifier identifier = new Account.Identifier();
-                identifier.setName("Address");
-                identifier.setValue(address);
-                account.addIdentifier(identifier);
+            Account.Identifier identifier = new Account.Identifier();
+            identifier.setName("Address");
+            identifier.setValue(address);
+            account.addIdentifier(identifier);
 
-                Account.Balance balanceInEuro = new Account.Balance();
-                balanceInEuro.setAmount(euroBalance);
-                balanceInEuro.setCurrency("EUR");
+            Account.Balance balanceInEuro = new Account.Balance();
+            balanceInEuro.setAmount(euroBalance);
+            balanceInEuro.setCurrency("EUR");
 
-                Account.Balance balanceInEther = new Account.Balance();
-                balanceInEther.setAmount(etherBalance);
-                balanceInEther.setCurrency("ether");
+            Account.Balance balanceInEther = new Account.Balance();
+            balanceInEther.setAmount(etherBalance);
+            balanceInEther.setCurrency("ether");
 
-                account.addBalance(balanceInEther);
-                account.addBalance(balanceInEuro);
+            account.addBalance(balanceInEther);
+            account.addBalance(balanceInEuro);
 
-                accounts.add(account);
-            } catch (Exception e) {
-                LOG.error("Something went wrong fetching Ethereum account {}: ", address, e);
-            }
+            accounts.add(account);
+        } catch (Exception e) {
+            LOG.error("Something went wrong fetching Ethereum account {}: ", address, e);
         }
 
         return accounts;

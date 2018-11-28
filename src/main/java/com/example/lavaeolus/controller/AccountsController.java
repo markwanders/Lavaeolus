@@ -39,8 +39,9 @@ public class AccountsController extends AbstractController {
         if(currentUser.getBunqKey() != null && !currentUser.getBunqKey().isEmpty()) {
             accounts.addAll(bunqService.getAccounts(currentUser));
         }
-        accounts.addAll(ethereumService.getAccounts(currentUser));
-
+        if(currentUser.getEthereumAddress() != null && !currentUser.getEthereumAddress().isEmpty()) {
+            accounts.addAll(ethereumService.getAccounts(currentUser));
+        }
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
