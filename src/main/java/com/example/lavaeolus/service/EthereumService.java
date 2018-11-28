@@ -1,16 +1,16 @@
 package com.example.lavaeolus.service;
 
+import com.example.lavaeolus.client.CryptoCompareClient;
+import com.example.lavaeolus.client.EtherScanClient;
+import com.example.lavaeolus.client.domain.CryptoCompareReply;
+import com.example.lavaeolus.client.domain.EtherScanBalance;
+import com.example.lavaeolus.client.domain.EtherScanTransactions;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.controller.domain.Transaction;
-import com.example.lavaeolus.dao.CryptoCompareClient;
-import com.example.lavaeolus.dao.EtherScanClient;
-import com.example.lavaeolus.dao.domain.CryptoCompareReply;
-import com.example.lavaeolus.dao.domain.EtherScanBalance;
-import com.example.lavaeolus.dao.domain.EtherScanTransactions;
+import com.example.lavaeolus.database.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,51 +33,47 @@ public class EthereumService implements AccountService {
     @Autowired
     private CryptoCompareClient cryptoCompareClient;
 
-    @Value("${etherscan.address}")
-    private String[] addresses;
-
-    public List<Account> getAccounts() {
+    public List<Account> getAccounts(User user) {
         List<Account> accounts = new ArrayList<>();
 
+        CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
+
+
+        String address = user.getEthereumAddress();
         try {
-            CryptoCompareReply cryptoCompareReply = cryptoCompareClient.getPrice();
+            EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
 
-            for (String address : addresses) {
-                EtherScanBalance etherScanBalance = etherScanClient.getBalance(address);
+            Account account = new Account(Account.AccountType.ethereum);
 
-                Account account = new Account(Account.AccountType.ethereum);
+            BigDecimal etherBalance = new BigDecimal(etherScanBalance.getResult()).divide(weiToEtherRatio);
+            BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
 
-                BigDecimal etherBalance = new BigDecimal(etherScanBalance.getResult()).divide(weiToEtherRatio);
-                BigDecimal euroBalance = cryptoCompareReply.getEUR().multiply(etherBalance).setScale(2, RoundingMode.HALF_UP);
+            Account.Identifier identifier = new Account.Identifier();
+            identifier.setName("Address");
+            identifier.setValue(address);
+            account.addIdentifier(identifier);
 
-                Account.Identifier identifier = new Account.Identifier();
-                identifier.setName("Address");
-                identifier.setValue(address);
-                account.addIdentifier(identifier);
+            Account.Balance balanceInEuro = new Account.Balance();
+            balanceInEuro.setAmount(euroBalance);
+            balanceInEuro.setCurrency("EUR");
 
-                Account.Balance balanceInEuro = new Account.Balance();
-                balanceInEuro.setAmount(euroBalance);
-                balanceInEuro.setCurrency("EUR");
+            Account.Balance balanceInEther = new Account.Balance();
+            balanceInEther.setAmount(etherBalance);
+            balanceInEther.setCurrency("ether");
 
-                Account.Balance balanceInEther = new Account.Balance();
-                balanceInEther.setAmount(etherBalance);
-                balanceInEther.setCurrency("ether");
+            account.addBalance(balanceInEther);
+            account.addBalance(balanceInEuro);
 
-                account.addBalance(balanceInEther);
-                account.addBalance(balanceInEuro);
-
-                accounts.add(account);
-            }
-
+            accounts.add(account);
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Ethereum accounts: {}", e);
+            LOG.error("Something went wrong fetching Ethereum account {}: ", address, e);
         }
 
         return accounts;
     }
 
     @Override
-    public List<Transaction> getTransactions(String accountIdentifier) {
+    public List<Transaction> getTransactions(User user, String accountIdentifier) {
         List<Transaction> transactions = new ArrayList<>();
 
         try {
@@ -94,7 +90,7 @@ public class EthereumService implements AccountService {
                 transactions.add(transaction);
             }
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Ethereum transactions: {}", e);
+            LOG.error("Something went wrong fetching Ethereum transactions: ", e);
 
         }
 

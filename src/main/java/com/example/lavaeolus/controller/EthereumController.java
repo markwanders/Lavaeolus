@@ -21,7 +21,7 @@ import java.util.List;
 
 @RequestMapping("/api/accounts/ethereum")
 @RestController
-public class EthereumController {
+public class EthereumController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(EthereumController.class);
 
     @Autowired
@@ -32,7 +32,7 @@ public class EthereumController {
     public ResponseEntity getAccounts() {
         LOG.info("Received request on Ethereum accounts endpoint");
 
-        List<Account> accounts = ethereumService.getAccounts();
+        List<Account> accounts = ethereumService.getAccounts(getCurrentUser());
 
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class EthereumController {
     public ResponseEntity getTransactions(@PathVariable("address") final String address) {
         LOG.info("Received request on Ethereum transactions endpoint: {}", address);
 
-        List<Transaction> transactions = ethereumService.getTransactions(address);
+        List<Transaction> transactions = ethereumService.getTransactions(getCurrentUser(), address);
 
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }

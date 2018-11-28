@@ -1,7 +1,8 @@
-package com.example.lavaeolus.security;
+package com.example.lavaeolus.security.domain;
 
-import com.example.lavaeolus.dao.domain.Role;
-import com.example.lavaeolus.dao.domain.User;
+import com.example.lavaeolus.database.domain.Role;
+import com.example.lavaeolus.database.domain.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 public class TokenUser extends org.springframework.security.core.userdetails.User {
@@ -12,6 +13,7 @@ public class TokenUser extends org.springframework.security.core.userdetails.Use
         this.user = user;
     }
 
+    @JsonIgnore
     public User getUser() {
         return user;
     }

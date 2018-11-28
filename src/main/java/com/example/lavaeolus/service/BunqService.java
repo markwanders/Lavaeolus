@@ -3,9 +3,11 @@ package com.example.lavaeolus.service;
 import com.bunq.sdk.model.generated.endpoint.MonetaryAccount;
 import com.bunq.sdk.model.generated.endpoint.Payment;
 import com.bunq.sdk.model.generated.object.Pointer;
+import com.example.lavaeolus.BunqContextHolder;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.controller.domain.Transaction;
-import com.example.lavaeolus.dao.BunqClient;
+import com.example.lavaeolus.client.BunqClient;
+import com.example.lavaeolus.database.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,28 +28,31 @@ public class BunqService implements AccountService {
     @Autowired
     private BunqClient bunqClient;
 
-    public List<Account> getAccounts() {
+    public List<Account> getAccounts(User user) {
+        LOG.debug("Getting accounts for user {}", user);
         List<Account> accounts = new ArrayList<>();
 
         try {
-            List<MonetaryAccount> monetaryAccounts = bunqClient.fetchAccounts();
+            List<MonetaryAccount> monetaryAccounts = bunqClient.fetchAccounts(BunqContextHolder.getContextForUser(user));
 
             for (MonetaryAccount monetaryAccount : monetaryAccounts) {
                 Account account = createAccountFromBunqAccount(monetaryAccount);
                 accounts.add(account);
             }
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Bunq accounts: {}", e);
+            LOG.error("Something went wrong fetching Bunq accounts: ", e);
         }
 
         return accounts;
     }
 
-    public List<Transaction> getTransactions(String accountIdentifier) {
+    public List<Transaction> getTransactions(User user, String accountIdentifier) {
+        LOG.debug("Getting transactions for user {} and account {}", user, accountIdentifier);
+
         List<Transaction> transactions = new ArrayList<>();
 
         try {
-            List<Payment> bunqPayments = bunqClient.fetchPayments(Integer.valueOf(accountIdentifier));
+            List<Payment> bunqPayments = bunqClient.fetchPayments(BunqContextHolder.getContextForUser(user), Integer.valueOf(accountIdentifier));
 
             for (Payment bunqPayment : bunqPayments) {
                 BigDecimal amount = new BigDecimal(bunqPayment.getAmount().getValue());
@@ -65,8 +70,10 @@ public class BunqService implements AccountService {
                 transactions.add(transaction);
             }
         } catch (Exception e) {
-            LOG.error("Something went wrong fetching Bunq transactions: {}", e);
+            LOG.error("Something went wrong fetching Bunq transactions: ", e);
         }
+
+        LOG.debug("Fetched transactions for account {}: {}", accountIdentifier, transactions);
 
         return transactions;
     }
