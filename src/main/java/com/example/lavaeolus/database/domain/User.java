@@ -34,7 +34,7 @@ public class User {
         //Obfuscate secrets in API response
         if (this.bunqKey != null && !this.bunqKey.isEmpty()) {
             int length = this.bunqKey.length();
-            return StringUtils.repeat("*", Math.max(length - 4, length)) + this.bunqKey.substring(Math.max(length - 4, length), length);
+            return StringUtils.repeat("*", Math.max(length - 4, 0)) + this.bunqKey.substring(Math.max(length - 4, 0), length);
         } else return null;
     }
 

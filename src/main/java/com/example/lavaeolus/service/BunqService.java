@@ -73,6 +73,8 @@ public class BunqService implements AccountService {
             LOG.error("Something went wrong fetching Bunq transactions: ", e);
         }
 
+        LOG.debug("Fetched transactions for account {}: {}", accountIdentifier, transactions);
+
         return transactions;
     }
 

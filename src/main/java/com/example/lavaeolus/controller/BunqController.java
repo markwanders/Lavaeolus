@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class BunqController extends AbstractController {
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity getAccounts() throws IOException {
+    public ResponseEntity getAccounts() {
         LOG.info("Received request on Bunq accounts endpoint");
 
         List<Account> accounts = bunqService.getAccounts(getCurrentUser());
@@ -39,8 +38,8 @@ public class BunqController extends AbstractController {
 
     @RequestMapping(value="/{id}/transactions", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity getTransactions(@PathVariable("id") final String id) throws IOException {
-        LOG.info("Received request on Bunq transactions endpoint");
+    public ResponseEntity getTransactions(@PathVariable("id") final String id) {
+        LOG.info("Received request on Bunq transactions endpoint: {}", id);
 
         List<Transaction> transactions = new ArrayList<>(bunqService.getTransactions(getCurrentUser(), id));
 
