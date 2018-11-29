@@ -9,43 +9,47 @@
 <dom-module id="login-page">
     <template>
         <style include="shared-styles">
-          :host {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: var(--dark-primary-color);
-          }
-          .wrapper-btns {
-            margin-top: 15px;
-          }
-          .login {
-            background: #fff;
-            box-sizing: border-box;
-            padding: 20px;
-            width: 400px;
-          }
-          @media (max-width: 600px){
             :host {
-              justify-content: flex-end;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: var(--dark-primary-color);
             }
+
+            .wrapper-btns {
+                margin-top: 15px;
+            }
+
             .login {
-              width: 100vw;
-              height: 50vh;
+                background: #fff;
+                box-sizing: border-box;
+                padding: 20px;
+                width: 400px;
             }
-          }
+
+            @media (max-width: 600px) {
+                :host {
+                    justify-content: flex-end;
+                }
+
+                .login {
+                    width: 100vw;
+                    height: 50vh;
+                }
+            }
         </style>
 
         <paper-material class="login" elevation="3">
             <div hidden="[[isSignUp]]">
                 <h1>Log in</h1>
                 <iron-a11y-keys keys="enter" on-keys-pressed="_logIn"></iron-a11y-keys>
-                <iron-form id="login" >
+                <iron-form id="login">
                     <form method="post" action="/login">
                         <paper-input value={{username}} label="Username" name="username" required
-                                     autofocus></paper-input>
+                                     autofocus autocomplete></paper-input>
                         <paper-input value="{{password}}" label="Password" name="password"
-                                     type="password" required></paper-input>
+                                     type="password" required autocomplete></paper-input>
                         <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
                         <div class="wrapper-btns">
                             <paper-button id="login-button" class="primary" on-tap="_logIn" raised>Login</paper-button>
@@ -65,6 +69,7 @@
                         <span class="error-message" hidden="[[!errorMessage]]">[[errorMessage]]</span>
                         <div class="wrapper-btns">
                             <paper-button class="primary" on-tap="_register" raised>Sign Up</paper-button>
+                            <paper-button on-tap="back">Back</paper-button>
                         </div>
                     </form>
                 </iron-form>
@@ -72,55 +77,59 @@
         </paper-material>
     </template>
     <script>
-    Polymer({
-      is: 'login-page',
+        Polymer({
+            is: 'login-page',
 
-      behaviors: [Polymer.NeonAnimatableBehavior],
+            behaviors: [Polymer.NeonAnimatableBehavior],
 
-      properties: {
-        username: String,
-        password: String,
-        isSignUp: {
-            type: Boolean,
-            value: false
-        },
-        errorMessage: String,
-        token: {
-          type: String,
-          notify: true
-        }
-      },
+            properties: {
+                username: String,
+                password: String,
+                isSignUp: {
+                    type: Boolean,
+                    value: false
+                },
+                errorMessage: String,
+                token: {
+                    type: String,
+                    notify: true
+                }
+            },
 
-      listeners: {
-        'iron-form-response': '_handleLoginSuccess',
-        'iron-form-error': '_handleLoginError'
-      },
+            listeners: {
+                'iron-form-response': '_handleLoginSuccess',
+                'iron-form-error': '_handleLoginError'
+            },
 
-      observers: ['_errorClearer(username, password)'],
+            observers: ['_errorClearer(username, password)'],
 
-      _errorClearer: function() {
-        this.errorMessage = '';
-      },
+            _errorClearer: function () {
+                this.errorMessage = '';
+            },
 
-      _logIn: function() {
-        this.$.login.submit();
-      },
+            _logIn: function () {
+                this.$.login.submit();
+            },
 
-      _register: function() {
-        if(this.isSignUp) {
-            this.$.signup.submit();
-        } else {
-            this.isSignUp = true;
-        }
-      },
+            _register: function () {
+                if (this.isSignUp) {
+                    this.$.signup.submit();
+                } else {
+                    this.isSignUp = true;
+                }
+            },
 
-      _handleLoginSuccess: function(evt) {
-        this.token = evt.detail.xhr.getResponseHeader('x-auth-token');
-      },
+            _back: function () {
+                this.isSignUp = false;
+            },
 
-      _handleLoginError: function() {
-        this.errorMessage = 'You are doing it wrong.'
-      }
-    });
-  </script>
+            _handleLoginSuccess: function (evt) {
+                this.token = evt.detail.xhr.getResponseHeader('x-auth-token');
+            },
+
+            _handleLoginError: function () {
+                this.errorMessage = 'You are doing it wrong.'
+            }
+        });
+    </script>
 </dom-module>

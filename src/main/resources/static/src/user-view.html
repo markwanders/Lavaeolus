@@ -191,7 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _handleChangePasswordSuccess(e) {
             this.newPassword = this.confirmNewPassword = '';
-            this.successMessage = 'Successfully changed password.'
+            this.successMessage = 'Successfully changed password.';
             this.token = e.detail.xhr.getResponseHeader('x-auth-token');
         }
 
@@ -203,7 +203,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var password = encodeURIComponent(this.newPassword);
             var confirmPassword = encodeURIComponent(this.confirmNewPassword);
             if(password !== null && password!== undefined && password !== "") {
-                if(password != confirmPassword){
+                if(password !== confirmPassword){
                     this.errorMessage = 'Passwords not equal.'
                 } else {
                     this.errorMessage = ''
