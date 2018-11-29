@@ -87,7 +87,7 @@ public class TokenUserDetailsService implements UserDetailsService {
     public Map<String, String> registerNewUserAndReturnTokenHeader(String username, String password) {
         User user = new User();
         user.setUsername(username);
-        user.setPassword(password);
+        user.setPassword(new BCryptPasswordEncoder().encode(password));
         user.setRole(Role.USER);
         user = userRepository.save(user);
 
