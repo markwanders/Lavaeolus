@@ -60,7 +60,29 @@ public class Account {
     }
 
     public enum AccountType {
-        bunq, ethereum
+        bunq("Bunq", true), ethereum("Ethereum", true), rabobank("Rabobank", false);
+        private String name;
+        private boolean needsKey;
 
+        AccountType(String name, boolean needsKey) {
+            this.name = name;
+            this.needsKey = needsKey;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public boolean isNeedsKey() {
+            return needsKey;
+        }
+
+        public void setNeedsKey(boolean needsKey) {
+            this.needsKey = needsKey;
+        }
     }
 }
