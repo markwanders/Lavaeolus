@@ -72,11 +72,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             <paper-dropdown-menu label="Account type" on-iron-select="_itemSelected" name="accountType">
                                 <paper-listbox slot="dropdown-content" class="dropdown-content">
                                     <template is="dom-repeat" items="{{types}}" as="accountType">
-                                        <paper-item data-value="{{accountType}}">{{accountType}}</paper-item>
+                                        <paper-item data-value="{{accountType.name}}">{{accountType.name}}</paper-item>
                                     </template>
                                 </paper-listbox>
                             </paper-dropdown-menu>
-                            <template is="dom-if" if="{{accountType}}">
+                            <template is="dom-if" if="{{accountType.keyRequired}}">
                                 <paper-input value="{{newKey}}" label="Key"
                                              name="newKey"></paper-input>
                             </template>

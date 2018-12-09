@@ -1,5 +1,6 @@
 package com.example.lavaeolus.controller.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -59,14 +60,15 @@ public class Account {
         }
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum AccountType {
         bunq("Bunq", true), ethereum("Ethereum", true), rabobank("Rabobank", false);
         private String name;
-        private boolean needsKey;
+        private boolean keyRequired;
 
-        AccountType(String name, boolean needsKey) {
+        AccountType(String name, boolean keyRequired) {
             this.name = name;
-            this.needsKey = needsKey;
+            this.keyRequired = keyRequired;
         }
 
         public String getName() {
@@ -77,12 +79,12 @@ public class Account {
             this.name = name;
         }
 
-        public boolean isNeedsKey() {
-            return needsKey;
+        public boolean isKeyRequired() {
+            return keyRequired;
         }
 
-        public void setNeedsKey(boolean needsKey) {
-            this.needsKey = needsKey;
+        public void setKeyRequired(boolean keyRequired) {
+            this.keyRequired = keyRequired;
         }
     }
 }

@@ -59,21 +59,20 @@ public class UserController extends AbstractController {
         tokenHeader.setAll(tokenUserDetailsService.createTokenHeader(user));
 
         return new ResponseEntity<>(user, tokenHeader, HttpStatus.OK);
-
     }
 
     @RequestMapping(path = "/account", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity addAccount(@RequestParam(value="newKey") String newKey , @RequestParam(value = "accountType") String accountType) {
+    public ResponseEntity addAccount(@RequestParam(value = "accountType") String accountType, @RequestParam(value="newKey", required = false) String newKey) {
         LOG.info("Received request on addAccount endpoint: {}", accountType);
         User user = null;
         Account.AccountType type = Account.AccountType.valueOf(accountType.toLowerCase());
 
-        if(newKey != null && !newKey.isEmpty()) {
+        if(type.isKeyRequired() && (newKey == null || newKey.isEmpty())) {
+            throw new IllegalArgumentException("New key is invalid");
+        } else {
             LOG.debug("Adding key");
             user = tokenUserDetailsService.changeKeyByUsername(getCurrentUser().getUsername(), newKey, type).getUser();
-        } else {
-            throw new IllegalArgumentException("New key is invalid");
         }
 
         MultiValueMap<String, String> headers = new HttpHeaders();
@@ -85,8 +84,6 @@ public class UserController extends AbstractController {
             headers.setAll(tokenUserDetailsService.createTokenHeader(user));
             return new ResponseEntity<>(user, headers, HttpStatus.OK);
         }
-
-
     }
 
     @RequestMapping(path = "/account/{accountType}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -108,7 +105,9 @@ public class UserController extends AbstractController {
     public ResponseEntity allowedAccountTypes() {
         LOG.info("Received request on allowedAccountTypes endpoint");
 
-        return new ResponseEntity<>(Arrays.stream(Account.AccountType.values()).map(Account.AccountType::getName).toArray(), HttpStatus.OK);
+        return new ResponseEntity<>(Arrays
+                .stream(Account.AccountType.values())
+                .toArray(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/account/{accountType}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
