@@ -38,6 +38,17 @@ public class User {
         } else return null;
     }
 
+    private String rabobankAccessToken;
+
+    @JsonProperty("rabobankAccessToken")
+    public String getObfuscatedRabobankAccessToken() {
+        //Obfuscate secrets in API response
+        if (this.rabobankAccessToken != null && !this.rabobankAccessToken.isEmpty()) {
+            int length = this.rabobankAccessToken.length();
+            return StringUtils.repeat("*", Math.max(length - 4, 0)) + this.rabobankAccessToken.substring(Math.max(length - 4, 0), length);
+        } else return null;
+    }
+
     //todo: use private key instead so we can also do payments etc.
     private String ethereumAddress;
 
@@ -87,5 +98,9 @@ public class User {
 
     public void setEthereumAddress(String ethereumAddress) {
         this.ethereumAddress = ethereumAddress;
+    }
+
+    public void setRabobankAccessToken(String rabobankAccessToken) {
+        this.rabobankAccessToken = rabobankAccessToken;
     }
 }

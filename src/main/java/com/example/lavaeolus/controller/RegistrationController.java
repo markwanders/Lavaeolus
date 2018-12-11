@@ -40,11 +40,14 @@ public class RegistrationController {
     }
 
     @RequestMapping(path = "/account/{accountType}/", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity confirmRegistration(@PathVariable(value = "accountType") String accountType, @RequestParam(value = "code", required = false) String code) {
-        LOG.info("Received request on confirmRegistration endpoint: {} {}", accountType, code);
+    public ResponseEntity confirmRegistration(
+            @PathVariable(value = "accountType") String accountType,
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "state", required = false) String state) {
+        LOG.info("Received request on confirmRegistration endpoint: {} {} {}", accountType, code, state);
 
         if(Account.AccountType.rabobank.getName().equals(accountType)) {
-            rabobankService.register(code);
+            rabobankService.register(code, state);
         }
 
         return ResponseEntity

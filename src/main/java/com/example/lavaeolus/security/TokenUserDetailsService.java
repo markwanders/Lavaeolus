@@ -59,6 +59,9 @@ public class TokenUserDetailsService implements UserDetailsService {
             case ethereum:
                 user.setEthereumAddress(newKey);
                 break;
+            case rabobank:
+                user.setRabobankAccessToken(newKey);
+                break;
         }
         tokenUser = new TokenUser(userRepository.save(user));
 

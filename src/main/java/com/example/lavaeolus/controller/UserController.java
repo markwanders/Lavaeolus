@@ -76,7 +76,7 @@ public class UserController extends AbstractController {
 
         MultiValueMap<String, String> headers = new HttpHeaders();
         if(Account.AccountType.rabobank.equals(type)) {
-            headers.add("redirect", rabobankService.redirect());
+            headers.add("redirect", rabobankService.redirect(getCurrentUser().getUsername()));
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else {
             headers.setAll(tokenUserDetailsService.createTokenHeader(user));
@@ -107,6 +107,4 @@ public class UserController extends AbstractController {
                 .stream(Account.AccountType.values())
                 .toArray(), HttpStatus.OK);
     }
-
-
 }
