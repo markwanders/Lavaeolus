@@ -15,13 +15,13 @@ import java.io.IOException;
 public class RabobankClient {
     private static final Logger LOG = LoggerFactory.getLogger(RabobankClient.class);
 
-    public static final String RABOBANK_URL = "https://api-sandbox.rabobank.nl/openapi/sandbox/oauth2/";
+    public static final String RABOBANK_URL = "https://api-sandbox.rabobank.nl/openapi/sandbox/oauth2";
 
     @Autowired
     private RestTemplate restTemplate;
 
     public String getAccessToken(String authorizationCode) {
-        String requestURL = RABOBANK_URL + "token&code=" + authorizationCode;
+        String requestURL = RABOBANK_URL + "/token&code=" + authorizationCode;
 
         LOG.info("Sending request to {}", requestURL);
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(requestURL, String.class);
