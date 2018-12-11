@@ -3,16 +3,18 @@ package com.example.lavaeolus.controller;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.TokenUserDetailsService;
+import com.example.lavaeolus.service.RabobankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLEncoder;
 import java.util.Arrays;
 
 @RequestMapping("/api/user")
@@ -23,11 +25,8 @@ public class UserController extends AbstractController {
     @Autowired
     private TokenUserDetailsService tokenUserDetailsService;
 
-    @Value("${rabobank.redirect_uri}")
-    private String rabobankRedirectyURI;
-
-    @Value("${rabobank.client_id}")
-    private String rabobankClientID;
+    @Autowired
+    private RabobankService rabobankService;
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
@@ -77,8 +76,7 @@ public class UserController extends AbstractController {
 
         MultiValueMap<String, String> headers = new HttpHeaders();
         if(Account.AccountType.rabobank.equals(type)) {
-            headers.add("redirect",
-                    "https://api-sandbox.rabobank.nl/openapi/sandbox/oauth2/authorize?client_id=" + rabobankClientID + "&scope=AIS-Transactions-v2&response_type=code&redirect_uri=" + URLEncoder.encode(rabobankRedirectyURI));
+            headers.add("redirect", rabobankService.redirect());
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else {
             headers.setAll(tokenUserDetailsService.createTokenHeader(user));
@@ -112,8 +110,12 @@ public class UserController extends AbstractController {
 
     @RequestMapping(path = "/account/{accountType}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity confirmRegistration(@PathVariable(value = "accountType") String accountType) {
-        LOG.info("Received request on confirmRegistration endpoint: {}", accountType);
+    public ResponseEntity confirmRegistration(@PathVariable(value = "accountType") String accountType, @RequestParam(value = "code") String code) {
+        LOG.info("Received request on confirmRegistration endpoint: {} {}", accountType, code);
+
+        if(Account.AccountType.rabobank.getName().equals(accountType)) {
+            rabobankService.register(code);
+        }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

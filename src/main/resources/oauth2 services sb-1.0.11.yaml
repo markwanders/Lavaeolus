@@ -1,0 +1,174 @@
+basePath: /oauth2
+definitions:
+  access_token_response:
+    additionalProperties: false
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      scope:
+        type: string
+      token_type:
+        enum:
+          - bearer
+    required:
+      - token_type
+      - access_token
+      - expires_in
+    type: object
+info:
+  description: |-
+    # Services needed to obtain tokens for oAuth secured API's
+
+
+    ## Error codes and their causes
+    In addition to the [response codes](/response-codes) that apply to all API's the oAuth provider API's have some special error situations:
+
+
+    | Situation  | Results |
+    | ------------- | ------------- |
+    | Invalid redirect_uri | This results in a HTTP 200 return code and this [error page](/invalid_redirect_uri)|
+    | Invalid scope | This results in a HTTP 302 redirect to the redirect_uri with query parameter `/?error=invalid_scope`|
+  title: oauth2 services sb
+  version: 1.0.11
+  x-ibm-name: oauth2-services-sb
+paths:
+  /authorize:
+    get:
+      description: description
+      parameters:
+        - description: request an authorization code or or access token (implicit)
+          enum:
+            - code
+            - token
+          in: query
+          name: response_type
+          required: true
+          type: string
+        - description: Application client ID
+          in: query
+          name: client_id
+          required: true
+          type: string
+        - description: Scope being requested
+          in: query
+          name: scope
+          required: true
+          type: string
+        - description: URI where user is redirected to after authorization
+          in: query
+          name: redirect_uri
+          required: true
+          type: string
+        - description: This string will be echoed back to application when user is redirected
+          in: query
+          name: state
+          required: false
+          type: string
+      produces:
+        - text/html
+      responses:
+        '200':
+          description: An HTML form for authentication or authorization of this request.
+        '302':
+          description: |
+            Redirect to the clients redirect_uri containing one of the following
+            - **authorization code** for Authorization code grant
+            - **access token** for Implicity grant
+            - **error** in case of errors, such as the user has denied the request
+      security:
+        - clientID: []
+      summary: endpoint for Authorization Code and Implicit grants
+  /token:
+    post:
+      consumes:
+        - application/x-www-form-urlencoded
+      description: |
+        This endpoint allows requesting an access token following one of the flows below:
+        - Authorization Code (exchange code for access token)
+        - Refresh Token (exchange refresh token for a new access code)
+
+
+        The table below indicates the required parameters for each specific grant_type options.
+        Empty cells indicate a parameter is ignored for that specific grant type.
+
+
+        Client authentication:
+        Confidential clients should authenticate using HTTP Basic Authentication,
+        where the username is the client_id and password is the client_secret.
+
+
+        |                      | Authorization code | Refresh token |
+        |----------------------|--------------------|---------------|
+        | grant_type           | authorization_code | refresh_token |
+        | code                 | required           |               |
+        | redirect_uri         | required           |               |
+        | refresh_token        |                    | required      |
+      parameters:
+        - description: Type of grant
+          enum:
+            - authorization_code
+            - refresh_token
+          in: formData
+          name: grant_type
+          required: true
+          type: string
+        - description: Client_id must be provided as USERNAME and client_secret as PASSWORD using HTTP Basic Authentication
+          in: header
+          name: authorization
+          required: true
+          type: string
+        - description: Authorization code provided by the /oauth2/authorize endpoint
+          in: formData
+          name: code
+          required: true
+          type: string
+        - description: required only if the redirect_uri parameter was included in the authorization request /oauth2/authorize; their values MUST be identical.
+          in: formData
+          name: redirect_uri
+          required: true
+          type: string
+        - description: The refresh token that the client wants to exchange for a new access token (refresh_token grant_type)
+          in: formData
+          name: refresh_token
+          required: false
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'json document containing token, etc.'
+          schema:
+            $ref: '#/definitions/access_token_response'
+        '400':
+          description: json document that may contain additional details about the failure
+      security: []
+      summary: Request Access Tokens
+produces:
+  - application/json
+schemes:
+  - https
+security:
+  - clientID: []
+securityDefinitions:
+  clientID:
+    description: ''
+    in: query
+    name: client_id
+    type: apiKey
+swagger: '2.0'
+x-ibm-configuration:
+  application-authentication:
+    certificate: false
+  enforced: true
+  phase: realized
+  testable: false
+  type: oauth
+x-ibm-endpoints:
+  - endpointUrl: 'https://api-sandbox.rabobank.nl/openapi/sandbox'
+    description: Base Gateway API Endpoint.
+    type:
+      - Production
