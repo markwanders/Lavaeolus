@@ -34,11 +34,10 @@ public class RabobankService {
         return RabobankClient.RABOBANK_URL + "/authorize?client_id=" + rabobankClientID + "&scope=AIS-Transactions-v2&response_type=code&state=" + state + "&redirect_uri=" + URLEncoder.encode(rabobankRedirectURI);
     }
 
-    public void register(String authorizationCode, String state) {
-        LOG.info("Registering new Rabobank user");
+    public User register(String authorizationCode, String state) {
+        LOG.info("Registering new Rabobank account for user: {}", state);
         String accessToken = rabobankClient.getAccessToken(authorizationCode);
 
-        User user = tokenUserDetailsService.changeKeyByUsername(state, accessToken, Account.AccountType.rabobank);
-        LOG.info("Received accessToken: {}", accessToken);
+        return tokenUserDetailsService.changeKeyByUsername(state, accessToken, Account.AccountType.rabobank);
     }
 }

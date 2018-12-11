@@ -46,7 +46,7 @@ public class RegistrationController {
             @RequestParam(value = "state", required = false) String state) {
         LOG.info("Received request on confirmRegistration endpoint: {} {} {}", accountType, code, state);
 
-        if(Account.AccountType.rabobank.getName().equals(accountType)) {
+        if(Account.AccountType.rabobank.getName().equalsIgnoreCase(accountType)) {
             rabobankService.register(code, state);
         }
 
