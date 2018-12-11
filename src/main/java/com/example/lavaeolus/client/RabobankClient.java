@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -41,24 +42,28 @@ public class RabobankClient {
         String requestURL = RABOBANK_URL + "/token?code=" + authorizationCode + "&grant_type=authorization_code&redirect_uri=" + URLEncoder.encode(rabobankRedirectURI);
 
         LOG.info("Sending request to {}", requestURL);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.POST, new HttpEntity<>(createHeaders(clientID, clientSecret)), String.class);
-
-        LOG.info("Received response: {}", responseEntity);
         try {
+            ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.POST, new HttpEntity<>(createHeaders(clientID, clientSecret)), String.class);
+
+            LOG.info("Received response: {}", responseEntity);
+
             return new ObjectMapper().readValue(responseEntity.getBody(), AccessTokenResponse.class).getAccessToken();
+        } catch (HttpClientErrorException e) {
+            LOG.error("Did not receive a correct response: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return null;
         } catch (IOException e) {
             LOG.error("An error occurred mapping the JSON response to an AccessTokenResponse: ", e);
             return null;
         }
     }
 
-    private HttpHeaders createHeaders(String username, String password){
+    private HttpHeaders createHeaders(String username, String password) {
         return new HttpHeaders() {{
             String auth = username + ":" + password;
             byte[] encodedAuth = Base64.encodeBase64(
-                    auth.getBytes(Charset.forName("US-ASCII")) );
-            String authHeader = "Basic " + new String( encodedAuth );
-            set( "Authorization", authHeader );
+                    auth.getBytes(Charset.forName("US-ASCII")));
+            String authHeader = "Basic " + new String(encodedAuth);
+            set("Authorization", authHeader);
         }};
     }
 }
