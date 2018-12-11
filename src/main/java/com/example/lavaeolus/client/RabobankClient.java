@@ -21,10 +21,10 @@ public class RabobankClient {
     private RestTemplate restTemplate;
 
     public String getAccessToken(String authorizationCode) {
-        String requestURL = RABOBANK_URL + "/token&code=" + authorizationCode;
+        String requestURL = RABOBANK_URL + "/token?code=" + authorizationCode;
 
         LOG.info("Sending request to {}", requestURL);
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(requestURL, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(requestURL, null, String.class);
 
         LOG.info("Received response: {}", responseEntity);
         try {
