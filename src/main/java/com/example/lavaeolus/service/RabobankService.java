@@ -24,7 +24,7 @@ public class RabobankService {
 
     public String redirect() {
         LOG.info("Building redirect URL for Rabobank OAuth2 flow");
-        String rabobankRedirectURI = root + "/register/account/rabobank";
+        String rabobankRedirectURI = root + "/register/account/rabobank/";
         return RabobankClient.RABOBANK_URL + "/authorize?client_id=" + rabobankClientID + "&scope=AIS-Transactions-v2&response_type=code&redirect_uri=" + URLEncoder.encode(rabobankRedirectURI);
     }
 
