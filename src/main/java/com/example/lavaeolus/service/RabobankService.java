@@ -16,15 +16,16 @@ public class RabobankService {
     @Resource
     private RabobankClient rabobankClient;
 
-    @Value("${rabobank.redirect_uri}")
-    private String rabobankRedirectyURI;
+    @Value("${lavaeolus.root}")
+    private String root;
 
     @Value("${rabobank.client_id}")
     private String rabobankClientID;
 
     public String redirect() {
         LOG.info("Building redirect URL for Rabobank OAuth2 flow");
-        return RabobankClient.RABOBANK_URL + "/authorize?client_id=" + rabobankClientID + "&scope=AIS-Transactions-v2&response_type=code&redirect_uri=" + URLEncoder.encode(rabobankRedirectyURI);
+        String rabobankRedirectURI = root + "/register/account/rabobank";
+        return RabobankClient.RABOBANK_URL + "/authorize?client_id=" + rabobankClientID + "&scope=AIS-Transactions-v2&response_type=code&redirect_uri=" + URLEncoder.encode(rabobankRedirectURI);
     }
 
     public void register(String authorizationCode) {

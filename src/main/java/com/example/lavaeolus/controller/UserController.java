@@ -108,15 +108,5 @@ public class UserController extends AbstractController {
                 .toArray(), HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/account/{accountType}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity confirmRegistration(@PathVariable(value = "accountType") String accountType, @RequestParam(value = "code") String code) {
-        LOG.info("Received request on confirmRegistration endpoint: {} {}", accountType, code);
 
-        if(Account.AccountType.rabobank.getName().equals(accountType)) {
-            rabobankService.register(code);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }
