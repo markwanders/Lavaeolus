@@ -2,6 +2,7 @@ package com.example.lavaeolus.client;
 
 import com.example.lavaeolus.AccessTokenResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,11 @@ public class RabobankClient {
 
             LOG.info("Received response: {}", responseEntity);
 
-            return new ObjectMapper().readValue(responseEntity.getBody(), AccessTokenResponse.class).getAccessToken();
+            return new ObjectMapper()
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                    .readValue(responseEntity.getBody(), AccessTokenResponse.class)
+                    .getAccessToken();
+
         } catch (HttpClientErrorException e) {
             LOG.error("Did not receive a correct response: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
             return null;
