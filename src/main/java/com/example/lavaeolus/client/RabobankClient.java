@@ -7,11 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,11 +38,25 @@ public class RabobankClient {
 
     public String getAccessToken(String authorizationCode) {
         String rabobankRedirectURI = root + "/register/account/rabobank/";
-        String requestURL = RABOBANK_URL + "/token?code=" + authorizationCode + "&grant_type=authorization_code&redirect_uri=" + URLEncoder.encode(rabobankRedirectURI);
+        String requestURL = RABOBANK_URL + "/token";
 
         LOG.info("Sending request to {}", requestURL);
         try {
-            ResponseEntity<String> responseEntity = restTemplate.exchange(requestURL, HttpMethod.POST, new HttpEntity<>(createHeaders(clientID, clientSecret)), String.class);
+            MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+            map.add("code", authorizationCode);
+            map.add("grant_type", "authorization_code");
+            map.add("redirect_uri", URLEncoder.encode(rabobankRedirectURI));
+
+            HttpHeaders headers = createHeaders(clientID, clientSecret);
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
+                    requestURL,
+                    HttpMethod.POST,
+                    request,
+                    String.class);
 
             LOG.info("Received response: {}", responseEntity);
 
