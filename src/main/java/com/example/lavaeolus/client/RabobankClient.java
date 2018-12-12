@@ -1,6 +1,7 @@
 package com.example.lavaeolus.client;
 
 import com.example.lavaeolus.AccessTokenResponse;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.apache.commons.codec.binary.Base64;
@@ -59,6 +60,7 @@ public class RabobankClient {
             LOG.info("Received response: {}", responseEntity);
 
             return new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                     .readValue(responseEntity.getBody(), AccessTokenResponse.class)
                     .getAccessToken();
