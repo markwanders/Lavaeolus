@@ -15,7 +15,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 @Component
@@ -37,15 +36,13 @@ public class RabobankClient {
     private String clientSecret;
 
     public String getAccessToken(String authorizationCode) {
-        String rabobankRedirectURI = root + "/register/account/rabobank/";
         String requestURL = RABOBANK_URL + "/token";
 
         LOG.info("Sending request to {}", requestURL);
         try {
             MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-            map.add("code", authorizationCode);
             map.add("grant_type", "authorization_code");
-            map.add("redirect_uri", URLEncoder.encode(rabobankRedirectURI));
+            map.add("code", authorizationCode);
 
             HttpHeaders headers = createHeaders(clientID, clientSecret);
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
