@@ -3,6 +3,7 @@ package com.example.lavaeolus.service;
 import com.example.lavaeolus.AccessTokenResponse;
 import com.example.lavaeolus.client.RabobankClient;
 import com.example.lavaeolus.controller.domain.Account;
+import com.example.lavaeolus.database.domain.RabobankToken;
 import com.example.lavaeolus.security.TokenUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,13 @@ public class RabobankService {
         LOG.info("Registering new Rabobank account for user: {}", state);
         AccessTokenResponse accessToken = rabobankClient.getAccessToken(authorizationCode);
 
-        return tokenUserDetailsService.changeKeyByUsername(state, accessToken, Account.AccountType.rabobank);
+        RabobankToken rabobankToken = new RabobankToken();
+        rabobankToken.setAccessToken(accessToken.getAccessToken());
+        rabobankToken.setExpiresIn(accessToken.getExpiresIn());
+        rabobankToken.setRefreshToken(accessToken.getRefreshToken());
+        rabobankToken.setScope(accessToken.getScope());
+        rabobankToken.setTokenType(accessToken.getTokenType());
+
+        return tokenUserDetailsService.changeKeyByUsername(state, rabobankToken, Account.AccountType.rabobank);
     }
 }
