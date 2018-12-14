@@ -38,6 +38,10 @@ public class User {
         } else return null;
     }
 
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "rabobankTokenId")
+    private RabobankToken rabobankToken;
+
     //todo: use private key instead so we can also do payments etc.
     private String ethereumAddress;
 
@@ -87,5 +91,13 @@ public class User {
 
     public void setEthereumAddress(String ethereumAddress) {
         this.ethereumAddress = ethereumAddress;
+    }
+
+    public RabobankToken getRabobankToken() {
+        return rabobankToken;
+    }
+
+    public void setRabobankToken(RabobankToken rabobankToken) {
+        this.rabobankToken = rabobankToken;
     }
 }

@@ -2,6 +2,7 @@ package com.example.lavaeolus.security;
 
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.UserRepository;
+import com.example.lavaeolus.database.domain.RabobankToken;
 import com.example.lavaeolus.database.domain.Role;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.domain.TokenUser;
@@ -46,7 +47,7 @@ public class TokenUserDetailsService implements UserDetailsService {
         return tokenUser;
     }
 
-    public TokenUser changeKeyByUsername(String username, String newKey, Account.AccountType accountType) throws UsernameNotFoundException {
+    public TokenUser changeKeyByUsername(String username, Object newKey, Account.AccountType accountType) throws UsernameNotFoundException {
         final User user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
 
         TokenUser tokenUser = new TokenUser(user);
@@ -54,10 +55,13 @@ public class TokenUserDetailsService implements UserDetailsService {
 
         switch (accountType) {
             case bunq:
-                user.setBunqKey(newKey);
+                user.setBunqKey((String) newKey);
                 break;
             case ethereum:
-                user.setEthereumAddress(newKey);
+                user.setEthereumAddress((String) newKey);
+                break;
+            case rabobank:
+                user.setRabobankToken((RabobankToken) newKey);
                 break;
         }
         tokenUser = new TokenUser(userRepository.save(user));
@@ -77,6 +81,9 @@ public class TokenUserDetailsService implements UserDetailsService {
                 break;
             case ethereum:
                 user.setEthereumAddress(null);
+                break;
+            case rabobank:
+                user.setRabobankToken(null);
                 break;
         }
         tokenUser = new TokenUser(userRepository.save(user));

@@ -48,6 +48,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <dd>{{user.role}}</dd>
                                 <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt>
                                 <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}} <paper-icon-button icon="icons:delete" on-tap="_deleteBunq"></paper-icon-button></dd>
+                                <dt hidden$="[[!user.rabobankToken]]">Rabobank access token</dt>
+                                <dd hidden$="[[!user.rabobankToken]]">{{user.rabobankToken.accessToken}} <paper-icon-button icon="icons:delete" on-tap="_deleteRabobank"></paper-icon-button></dd>
                                 <dt hidden$="[[!user.ethereumAddress]]">Ethereum address</dt>
                                 <dd hidden$="[[!user.ethereumAddress]]">{{user.ethereumAddress}} <paper-icon-button icon="icons:delete" on-tap="_deleteEth"></paper-icon-button></dd>
                             </dl>
@@ -71,13 +73,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <div class="card-content">
                             <paper-dropdown-menu label="Account type" on-iron-select="_itemSelected" name="accountType">
                                 <paper-listbox slot="dropdown-content" class="dropdown-content">
-                                    <template is="dom-repeat" items="{{accountTypes}}" as="accountType">
-                                        <paper-item data-value="{{accountType}}">{{accountType.name}}</paper-item>
+                                    <template is="dom-repeat" items="{{types}}" as="accountType">
+                                        <paper-item data-value="{{accountType.name}}">{{accountType.name}}</paper-item>
                                     </template>
                                 </paper-listbox>
                             </paper-dropdown-menu>
-                            <template is="dom-if" if="{{accountType}}">
-                                <paper-input value="{{newKey}}" label="[[accountType.keyName]]"
+                            <template is="dom-if" if="{{accountType.keyRequired}}">
+                                <paper-input value="{{newKey}}" label="Key"
                                              name="newKey"></paper-input>
                             </template>
                             <span class="error-message">[[accountErrorMessage]]</span>
@@ -113,6 +115,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </iron-ajax>
 
         <iron-ajax
+                id="types"
+                headers={{headers}}
+                url="/api/user/account"
+                method="GET"
+                content-type="application/json"
+                handle-as="json"
+                loading="{{loading}}"
+                last-response="{{types}}"
+                last-error="{{error}}"
+                on-error="_handleUserError">
+        </iron-ajax>
+
+        <iron-ajax
                 id="delete"
                 headers={{headers}}
                 method="DELETE"
@@ -133,10 +148,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return {
                 user: Object,
                 error: Object,
-                accountTypes: {
-                    type: Array,
-                    value: [{name: 'Bunq', keyName: 'API key'}, {name: 'Ethereum', keyName: 'Address'}]
-                },
                 showUserErrorMessage: {
                     type: Boolean,
                     value: false
@@ -159,8 +170,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         ready() {
             super.ready();
+            this.$.types.generateRequest();
             this.$.form.addEventListener('iron-form-response', this._handleChangePasswordSuccess.bind(this));
             this.$.form.addEventListener('iron-form-error', this._handleChangePasswordError.bind(this));
+            this.$.accountForm.addEventListener('iron-form-response', this._handleAddAccountSuccess.bind(this));
         }
 
         go() {
@@ -217,12 +230,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _addAccount() {
             this.$.accountForm.submit();
-            this.accountSuccessMessage = 'Added account of type ' + this.accountType.name;
-            location.reload();
+        }
+
+        _handleAddAccountSuccess(e) {
+            this.accountSuccessMessage = 'Added account of type ' + this.accountType;
+            this.$.user.generateRequest();
+            if(e.detail.xhr.getResponseHeader('redirect') !== null) {
+                window.location.assign(e.detail.xhr.getResponseHeader('redirect'), '_blank')
+            }
         }
 
         _deleteBunq() {
             this.$.delete.url = '/api/user/account/bunq';
+            this.$.delete.generateRequest();
+        }
+
+        _deleteRabobank() {
+            this.$.delete.url = '/api/user/account/rabobank';
             this.$.delete.generateRequest();
         }
 
