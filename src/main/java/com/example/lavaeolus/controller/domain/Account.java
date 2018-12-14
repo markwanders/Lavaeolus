@@ -62,7 +62,7 @@ public class Account {
 
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum AccountType {
-        bunq("Bunq", true), ethereum("Ethereum", true), rabobank("Rabobank", false);
+        bunq("Bunq", true), ethereum("Ethereum", true), rabobank("Rabobank", false), ing("ING", false);
         private String name;
         private boolean keyRequired;
 
