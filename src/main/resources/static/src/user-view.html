@@ -245,6 +245,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.$.delete.generateRequest();
         }
 
+        _deleteRabobank() {
+            this.$.delete.url = '/api/user/account/rabobank';
+            this.$.delete.generateRequest();
+        }
+
         _deleteEth() {
             this.$.delete.url = '/api/user/account/ethereum';
             this.$.delete.generateRequest();

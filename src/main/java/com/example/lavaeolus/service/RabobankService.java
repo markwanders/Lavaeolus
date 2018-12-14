@@ -1,5 +1,6 @@
 package com.example.lavaeolus.service;
 
+import com.example.lavaeolus.AccessTokenResponse;
 import com.example.lavaeolus.client.RabobankClient;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.security.TokenUserDetailsService;
@@ -36,7 +37,7 @@ public class RabobankService {
 
     public User register(String authorizationCode, String state) {
         LOG.info("Registering new Rabobank account for user: {}", state);
-        String accessToken = rabobankClient.getAccessToken(authorizationCode);
+        AccessTokenResponse accessToken = rabobankClient.getAccessToken(authorizationCode);
 
         return tokenUserDetailsService.changeKeyByUsername(state, accessToken, Account.AccountType.rabobank);
     }

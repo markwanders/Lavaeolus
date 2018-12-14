@@ -37,7 +37,7 @@ public class RabobankClient {
     @Value("${rabobank.client_secret}")
     private String clientSecret;
 
-    public String getAccessToken(String authorizationCode) {
+    public AccessTokenResponse getAccessToken(String authorizationCode) {
         String requestURL = RABOBANK_URL + "/token";
 
         LOG.info("Sending request to {}", requestURL);
@@ -62,8 +62,7 @@ public class RabobankClient {
             return new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                    .readValue(responseEntity.getBody(), AccessTokenResponse.class)
-                    .getAccessToken();
+                    .readValue(responseEntity.getBody(), AccessTokenResponse.class);
 
         } catch (HttpClientErrorException e) {
             LOG.error("Did not receive a correct response: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
