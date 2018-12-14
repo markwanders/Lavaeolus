@@ -42,6 +42,15 @@ public class User {
     @JoinColumn(name = "rabobankTokenId")
     private RabobankToken rabobankToken;
 
+    @JsonProperty("rabobankAccessToken")
+    public String getObfuscatedRabobankAccessToken() {
+        //Obfuscate secrets in API response
+        if (rabobankToken.getAccessToken() != null && !rabobankToken.getAccessToken().isEmpty()) {
+            int length = rabobankToken.getAccessToken().length();
+            return StringUtils.repeat("*", Math.max(length - 4, 0)) + rabobankToken.getAccessToken().substring(Math.max(length - 4, 0), length);
+        } else return null;
+    }
+
     //todo: use private key instead so we can also do payments etc.
     private String ethereumAddress;
 
