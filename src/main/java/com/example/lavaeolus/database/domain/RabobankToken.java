@@ -13,18 +13,71 @@ import javax.persistence.Id;
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RabobankToken extends AccessTokenResponse {
+public class RabobankToken {
     @Id
     @GeneratedValue
     private long rabobankTokenId;
 
+    private String accessToken;
+
+    private Integer expiresIn;
+
+    private String refreshToken;
+
+    private String scope;
+
+    private AccessTokenResponse.TokenTypeEnum tokenType;
+
     @JsonProperty("accessToken")
     public String getObfuscatedAccessToken() {
         //Obfuscate secrets in API response
-        if (this.getAccessToken() != null && !this.getAccessToken().isEmpty()) {
-            int length = this.getAccessToken().length();
-            return StringUtils.repeat("*", Math.max(length - 4, 0)) + this.getAccessToken().substring(Math.max(length - 4, 0), length);
+        if (this.accessToken != null && !this.accessToken.isEmpty()) {
+            int length = this.accessToken.length();
+            return StringUtils.repeat("*", Math.max(length - 4, 0)) + this.accessToken.substring(Math.max(length - 4, 0), length);
         } else return null;
     }
 
+    public long getRabobankTokenId() {
+        return rabobankTokenId;
+    }
+
+    public void setRabobankTokenId(long rabobankTokenId) {
+        this.rabobankTokenId = rabobankTokenId;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public Integer getExpiresIn() {
+        return expiresIn;
+    }
+
+    public void setExpiresIn(Integer expiresIn) {
+        this.expiresIn = expiresIn;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public AccessTokenResponse.TokenTypeEnum getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(AccessTokenResponse.TokenTypeEnum tokenType) {
+        this.tokenType = tokenType;
+    }
 }
