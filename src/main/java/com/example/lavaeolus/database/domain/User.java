@@ -38,7 +38,7 @@ public class User {
         } else return null;
     }
 
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "rabobankTokenId")
     private RabobankToken rabobankToken;
 

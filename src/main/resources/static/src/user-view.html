@@ -236,7 +236,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.accountSuccessMessage = 'Added account of type ' + this.accountType;
             this.$.user.generateRequest();
             if(e.detail.xhr.getResponseHeader('redirect') !== null) {
-                window.location.replace(e.detail.xhr.getResponseHeader('redirect'), '_blank')
+                window.location.assign(e.detail.xhr.getResponseHeader('redirect'), '_blank')
             }
         }
 
