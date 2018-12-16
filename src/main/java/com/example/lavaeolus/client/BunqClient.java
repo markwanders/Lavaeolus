@@ -11,10 +11,8 @@ import com.example.lavaeolus.AccessTokenResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -24,7 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +101,6 @@ public class BunqClient {
     public AccessTokenResponse getAccessToken(String authorizationCode, String clientId, String clientSecret, String redirectURI) {
         String requestURL = "https://api.oauth.bunq.com/v1/token";
 
-        LOG.info("Sending request to {}", requestURL);
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(requestURL)
                     .queryParam("grant_type", "authorization_code")
@@ -112,6 +108,8 @@ public class BunqClient {
                     .queryParam("redirect_uri ", redirectURI)
                     .queryParam("client_id", clientId)
                     .queryParam("client_secret", clientSecret);
+
+            LOG.info("Sending request to {}", builder.toUriString());
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(
                     builder.toUriString(),
@@ -133,16 +131,6 @@ public class BunqClient {
             LOG.error("An error occurred mapping the JSON response to an AccessTokenResponse: ", e);
             return null;
         }
-    }
-
-    private HttpHeaders createHeaders(String username, String password) {
-        return new HttpHeaders() {{
-            String auth = username + ":" + password;
-            byte[] encodedAuth = Base64.encodeBase64(
-                    auth.getBytes(Charset.forName("US-ASCII")));
-            String authHeader = "Basic " + new String(encodedAuth);
-            set("Authorization", authHeader);
-        }};
     }
 
 }
