@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +106,7 @@ public class BunqClient {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(requestURL)
                     .queryParam("grant_type", "authorization_code")
                     .queryParam("code", authorizationCode)
-                    .queryParam("redirect_uri ", redirectURI)
+                    .queryParam("redirect_uri", URLEncoder.encode(redirectURI))
                     .queryParam("client_id", clientId)
                     .queryParam("client_secret", clientSecret);
 

@@ -28,9 +28,6 @@ public class RabobankClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${lavaeolus.root}")
-    private String root;
-
     @Value("${rabobank.client_id}")
     private String clientID;
 
