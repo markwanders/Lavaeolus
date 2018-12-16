@@ -78,8 +78,8 @@ public class BunqService implements AccountService {
                 transaction.setAmount(amount);
                 transaction.setCurrency(bunqPayment.getAmount().getCurrency());
 
-                String displayName = bunqPayment.getCounterpartyAlias().getLabelMonetaryAccount().getDisplayName();
-                String iban = bunqPayment.getCounterpartyAlias().getLabelMonetaryAccount().getIban();
+                String displayName = bunqPayment.getCounterpartyAlias().getDisplayName();
+                String iban = bunqPayment.getCounterpartyAlias().getIban();
 
                 transaction.setCounterParty(displayName == null ? iban : displayName);
                 transaction.setDateTime(LocalDateTime.parse(bunqPayment.getCreated(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS")));

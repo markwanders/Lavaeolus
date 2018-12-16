@@ -21,14 +21,14 @@ public class BunqContextHolder {
 
     @Value("${bunq.environment}")
     public void setEnvironment(String environment) {
-        this.environment = environment;
+        BunqContextHolder.environment = environment;
     }
 
     private static String confLocation;
 
     @Value("${bunq.conf-location}")
     public void setConfLocation(String confLocation) {
-        this.confLocation = confLocation;
+        BunqContextHolder.confLocation = confLocation;
     }
 
     private static HashMap<Long, ApiContext> contextMap = new HashMap<>();

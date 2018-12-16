@@ -5,8 +5,6 @@ import com.bunq.sdk.http.BunqResponse;
 import com.bunq.sdk.http.Pagination;
 import com.bunq.sdk.model.generated.endpoint.MonetaryAccount;
 import com.bunq.sdk.model.generated.endpoint.Payment;
-import com.bunq.sdk.model.generated.endpoint.User;
-import com.bunq.sdk.model.generated.endpoint.UserPerson;
 import com.example.lavaeolus.AccessTokenResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,10 +37,7 @@ public class BunqClient {
 
     public List<MonetaryAccount> fetchAccounts(ApiContext apiContext) {
         LOG.debug("Fetching accounts: {}", apiContext);
-        List<MonetaryAccount> monetaryAccounts = MonetaryAccount.list(
-                apiContext,
-                getUserID(apiContext)
-        ).getValue();
+        List<MonetaryAccount> monetaryAccounts = MonetaryAccount.list().getValue();
 
         LOG.debug("Received accounts from Bunq: {}", monetaryAccounts);
 
@@ -55,8 +50,6 @@ public class BunqClient {
         Pagination paginationCountOnly = new Pagination();
         paginationCountOnly.setCount(PAGE_SIZE);
         BunqResponse<List<Payment>> paymentListResponse = Payment.list(
-                apiContext,
-                getUserID(apiContext),
                 accountID,
                 paginationCountOnly.getUrlParamsCountOnly()
         );
@@ -67,8 +60,6 @@ public class BunqClient {
 
         if (pagination.hasPreviousPage()) {
             List<Payment> previousPayments = Payment.list(
-                    apiContext,
-                    getUserID(apiContext),
                     accountID,
                     pagination.getUrlParamsPreviousPage()
             ).getValue();
@@ -79,26 +70,6 @@ public class BunqClient {
         LOG.debug("Received transactions from Bunq: {}", payments);
 
         return payments;
-    }
-
-    private Integer getUserID(final ApiContext apiContext) {
-        Integer userID = null;
-        //First fetch users in current context
-        List<User> users = User.list(apiContext).getValue();
-        LOG.info("Bunq users in context: {}", users);
-        if (users.size() > 0) {
-            //Only interested in the first user
-            User user = users.get(0);
-            LOG.info("First Bunq user in context: {}", user);
-            //Only interested in persons, not companies
-            UserPerson userPerson = user.getUserPerson();
-            if (userPerson != null) {
-                userID = userPerson.getId();
-                LOG.info("First Bunq userID in context: {}", userID);
-            }
-        }
-
-        return userID;
     }
 
     public AccessTokenResponse getAccessToken(String authorizationCode, String clientId, String clientSecret, String redirectURI) {
