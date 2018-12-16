@@ -43,7 +43,7 @@ public class BunqContextHolder {
 
             return contextMap.get(userId);
         } else {
-            if(user.getBunqKey() != null && !user.getBunqKey().isEmpty()) {
+            if(user.getBunqToken() != null && user.getBunqToken().getAccessToken() != null) {
                 LOG.debug("No APIContext found for user {}, creating new APIContext", userId);
                 String confFileString = confLocation + userId + ".conf";
 
@@ -55,7 +55,7 @@ public class BunqContextHolder {
                     apiContext = ApiContext.restore(confFileString);
                 } else {
                     LOG.info("No existing Bunq config file found, creating new context for {}", apiEnvironment);
-                    apiContext = ApiContext.create(apiEnvironment, user.getBunqKey(),
+                    apiContext = ApiContext.create(apiEnvironment, user.getBunqToken().getAccessToken(),
                             DEVICE_DESCRIPTION);
                     apiContext.save(confFileString);
                 }

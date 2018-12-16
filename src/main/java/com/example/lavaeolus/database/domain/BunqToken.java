@@ -1,6 +1,7 @@
 package com.example.lavaeolus.database.domain;
 
 import com.example.lavaeolus.AccessTokenResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,6 +44,11 @@ public class BunqToken {
 
     public void setRabobankTokenId(long rabobankTokenId) {
         this.bunqTokenId = rabobankTokenId;
+    }
+
+    @JsonIgnore
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
