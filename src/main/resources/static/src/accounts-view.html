@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </app-location>
 
         <template is="dom-repeat" items="{{accounts}}" as="account">
-            <paper-card class="card" heading="{{account.type}}">
+            <paper-card class="card" heading="{{account.type.name}}">
                 <div class="card-content">
                     <div class="circle">#[[index]]</div>
                     <dl>
@@ -100,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         computeTransactionsURL(account) {
-            return "/transactions/" + account.type + "/" + account.identifiers[0].value;
+            return "/transactions/" + account.type.name + "/" + account.identifiers[0].value;
         }
 
         _tokenUpdated(){
