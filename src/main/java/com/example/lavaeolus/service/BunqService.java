@@ -138,8 +138,10 @@ public class BunqService implements AccountService {
 
     public String redirect(String state) {
         LOG.info("Building redirect URL for Bunq OAuth2 flow");
-        String bunqRedirectURI = root + "/register/account/bunq/";
-        return "https://oauth.bunq.com/auth?client_id=" + bunqClientID + "&response_type=code&state=" + state + "&redirect_uri=" + URLEncoder.encode(bunqRedirectURI);
+        String redirectURI = root + "/register/account/bunq/";
+        String bunqRedirectURI = "https://oauth.bunq.com/auth?client_id=" + bunqClientID + "&response_type=code&state=" + state + "&redirect_uri=" + URLEncoder.encode(redirectURI);
+        LOG.info("Build redirect URL for Bunq OAuth2 flow: {}", bunqRedirectURI);
+        return bunqRedirectURI;
     }
 
     public org.springframework.security.core.userdetails.User register(String authorizationCode, String state) {
