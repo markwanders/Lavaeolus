@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.github.bunq</groupId>
             <artifactId>sdk_java</artifactId>
-            <version>0.12.4</version>
+            <version>1.1.0</version>
         </dependency>
 
         <dependency>

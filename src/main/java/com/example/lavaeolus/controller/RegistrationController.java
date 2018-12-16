@@ -3,6 +3,7 @@ package com.example.lavaeolus.controller;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.TokenUserDetailsService;
+import com.example.lavaeolus.service.BunqService;
 import com.example.lavaeolus.service.RabobankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,9 @@ public class RegistrationController {
 
     @Autowired
     private RabobankService rabobankService;
+
+    @Autowired
+    private BunqService bunqService;
 
     @Autowired
     private TokenUserDetailsService tokenUserDetailsService;
@@ -48,6 +52,8 @@ public class RegistrationController {
 
         if(Account.AccountType.rabobank.getName().equalsIgnoreCase(accountType)) {
             rabobankService.register(code, state);
+        } else if(Account.AccountType.bunq.getName().equalsIgnoreCase(accountType)) {
+            bunqService.register(code, state);
         }
 
         return ResponseEntity

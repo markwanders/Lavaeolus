@@ -23,8 +23,7 @@ dist/
 nbdist/
 .nb-gradle/
 
-### Bunq ###
-src/main/resources/bunq.conf
+src/main/resources/application.properties
 
 package-lock.json
 bower_components
