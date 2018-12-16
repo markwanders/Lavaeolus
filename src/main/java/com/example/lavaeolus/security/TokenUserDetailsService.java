@@ -2,6 +2,7 @@ package com.example.lavaeolus.security;
 
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.UserRepository;
+import com.example.lavaeolus.database.domain.BunqToken;
 import com.example.lavaeolus.database.domain.RabobankToken;
 import com.example.lavaeolus.database.domain.Role;
 import com.example.lavaeolus.database.domain.User;
@@ -55,7 +56,8 @@ public class TokenUserDetailsService implements UserDetailsService {
 
         switch (accountType) {
             case bunq:
-                user.setBunqKey((String) newKey);
+//                user.setBunqKey((String) newKey);
+                user.setBunqToken((BunqToken) newKey);
                 break;
             case ethereum:
                 user.setEthereumAddress((String) newKey);

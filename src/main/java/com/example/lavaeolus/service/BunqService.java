@@ -3,17 +3,23 @@ package com.example.lavaeolus.service;
 import com.bunq.sdk.model.generated.endpoint.MonetaryAccount;
 import com.bunq.sdk.model.generated.endpoint.Payment;
 import com.bunq.sdk.model.generated.object.Pointer;
+import com.example.lavaeolus.AccessTokenResponse;
 import com.example.lavaeolus.BunqContextHolder;
+import com.example.lavaeolus.client.BunqClient;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.controller.domain.Transaction;
-import com.example.lavaeolus.client.BunqClient;
+import com.example.lavaeolus.database.domain.BunqToken;
 import com.example.lavaeolus.database.domain.User;
+import com.example.lavaeolus.security.TokenUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,6 +33,18 @@ public class BunqService implements AccountService {
 
     @Autowired
     private BunqClient bunqClient;
+
+    @Resource
+    private TokenUserDetailsService tokenUserDetailsService;
+
+    @Value("${lavaeolus.root}")
+    private String root;
+
+    @Value("${bunq.client_id}")
+    private String bunqClientID;
+
+    @Value("${bunq.client_secret}")
+    private String bunqClientSecret;
 
     public List<Account> getAccounts(User user) {
         LOG.debug("Getting accounts for user {}", user);
@@ -116,5 +134,27 @@ public class BunqService implements AccountService {
         identifiers.add(IBANIdentifier);
 
         return identifiers;
+    }
+
+    public String redirect(String state) {
+        LOG.info("Building redirect URL for Bunq OAuth2 flow");
+        String bunqRedirectURI = root + "/register/account/bunq/";
+        return "https://oauth.bunq.com/auth?client_id=" + bunqClientID + "&response_type=code&state=" + state + "&redirect_uri=" + URLEncoder.encode(bunqRedirectURI);
+    }
+
+    public org.springframework.security.core.userdetails.User register(String authorizationCode, String state) {
+        LOG.info("Registering new Bunq account for user: {}", state);
+        String bunqRedirectURI = root + "/register/account/bunq/";
+
+        AccessTokenResponse accessToken = bunqClient.getAccessToken(authorizationCode, bunqClientID, bunqClientSecret, bunqRedirectURI);
+
+        BunqToken bunqToken = new BunqToken();
+        bunqToken.setAccessToken(accessToken.getAccessToken());
+        bunqToken.setExpiresIn(accessToken.getExpiresIn());
+        bunqToken.setRefreshToken(accessToken.getRefreshToken());
+        bunqToken.setScope(accessToken.getScope());
+        bunqToken.setTokenType(accessToken.getTokenType());
+
+        return tokenUserDetailsService.changeKeyByUsername(state, bunqToken, Account.AccountType.bunq);
     }
 }

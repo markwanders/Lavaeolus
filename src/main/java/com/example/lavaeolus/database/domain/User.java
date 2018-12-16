@@ -42,6 +42,10 @@ public class User {
     @JoinColumn(name = "rabobankTokenId")
     private RabobankToken rabobankToken;
 
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "bunqTokenId")
+    private BunqToken bunqToken;
+
     //todo: use private key instead so we can also do payments etc.
     private String ethereumAddress;
 
@@ -99,5 +103,13 @@ public class User {
 
     public void setRabobankToken(RabobankToken rabobankToken) {
         this.rabobankToken = rabobankToken;
+    }
+
+    public BunqToken getBunqToken() {
+        return bunqToken;
+    }
+
+    public void setBunqToken(BunqToken bunqToken) {
+        this.bunqToken = bunqToken;
     }
 }
