@@ -79,7 +79,7 @@ public class TokenUserDetailsService implements UserDetailsService {
 
         switch (accountType) {
             case bunq:
-                user.setBunqKey(null);
+                user.setBunqToken(null);
                 break;
             case ethereum:
                 user.setEthereumAddress(null);
