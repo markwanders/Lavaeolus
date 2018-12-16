@@ -1,6 +1,7 @@
 package com.example.lavaeolus.client;
 
 import com.bunq.sdk.context.ApiContext;
+import com.bunq.sdk.context.BunqContext;
 import com.bunq.sdk.http.BunqResponse;
 import com.bunq.sdk.http.Pagination;
 import com.bunq.sdk.model.generated.endpoint.MonetaryAccount;
@@ -36,6 +37,8 @@ public class BunqClient {
     private RestTemplate restTemplate;
 
     public List<MonetaryAccount> fetchAccounts(ApiContext apiContext) {
+        BunqContext.loadApiContext(apiContext);
+
         LOG.debug("Fetching accounts: {}", apiContext);
         List<MonetaryAccount> monetaryAccounts = MonetaryAccount.list().getValue();
 
@@ -46,6 +49,7 @@ public class BunqClient {
 
     public List<Payment> fetchPayments(ApiContext apiContext, Integer accountID) {
         LOG.debug("Fetching payments: {} {}", apiContext, accountID);
+        BunqContext.loadApiContext(apiContext);
 
         Pagination paginationCountOnly = new Pagination();
         paginationCountOnly.setCount(PAGE_SIZE);

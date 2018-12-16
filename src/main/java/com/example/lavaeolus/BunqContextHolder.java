@@ -67,8 +67,6 @@ public class BunqContextHolder {
                 LOG.error("User {} has no Bunq key, cannot create APIContext", userId);
                 return null;
             }
-
         }
     }
-
 }
