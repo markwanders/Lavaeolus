@@ -3,6 +3,7 @@ package com.example.lavaeolus.controller;
 import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.TokenUserDetailsService;
+import com.example.lavaeolus.service.INGService;
 import com.example.lavaeolus.service.RabobankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class UserController extends AbstractController {
 
     @Autowired
     private RabobankService rabobankService;
+
+    @Autowired
+    private INGService ingService;
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("isAuthenticated()")
@@ -77,6 +81,9 @@ public class UserController extends AbstractController {
         MultiValueMap<String, String> headers = new HttpHeaders();
         if(Account.AccountType.rabobank.equals(type)) {
             headers.add("redirect", rabobankService.redirect(getCurrentUser().getUsername()));
+            return new ResponseEntity<>(headers, HttpStatus.OK);
+        } else if(Account.AccountType.ing.equals(type)) {
+            headers.add("redirect", ingService.redirect(getCurrentUser().getUsername()));
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else {
             headers.setAll(tokenUserDetailsService.createTokenHeader(user));
