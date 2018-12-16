@@ -85,13 +85,16 @@ public class BunqClient {
         Integer userID = null;
         //First fetch users in current context
         List<User> users = User.list(apiContext).getValue();
+        LOG.info("Bunq users in context: {}", users);
         if (users.size() > 0) {
             //Only interested in the first user
             User user = users.get(0);
+            LOG.info("First Bunq user in context: {}", user);
             //Only interested in persons, not companies
             UserPerson userPerson = user.getUserPerson();
             if (userPerson != null) {
                 userID = userPerson.getId();
+                LOG.info("First Bunq userID in context: {}", userID);
             }
         }
 
