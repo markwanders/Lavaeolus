@@ -100,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
 
         computeTransactionsURL(account) {
-            return "/transactions/" + account.type.name + "/" + account.identifiers[0].value;
+            return "/transactions/" + account.type.name.toLowerCase() + "/" + account.identifiers[0].value;
         }
 
         _tokenUpdated(){
