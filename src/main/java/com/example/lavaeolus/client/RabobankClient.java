@@ -4,7 +4,7 @@ import com.example.lavaeolus.AccessTokenResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +27,6 @@ public class RabobankClient {
 
     @Autowired
     private RestTemplate restTemplate;
-
-    @Value("${lavaeolus.root}")
-    private String root;
 
     @Value("${rabobank.client_id}")
     private String clientID;

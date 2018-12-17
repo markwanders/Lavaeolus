@@ -33,10 +33,10 @@ public class AccountsController extends AbstractController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity getAccounts() {
         final User currentUser = getCurrentUser();
-        LOG.info("Received request on getAccounts endpoint for user: {}", currentUser);
+        LOG.info("Received request on getAccounts endpoint for user: {}", currentUser.getUsername());
 
         List<Account> accounts = new ArrayList<>();
-        if(currentUser.getBunqKey() != null && !currentUser.getBunqKey().isEmpty()) {
+        if(currentUser.getBunqToken() != null && currentUser.getBunqToken().getAccessToken() != null) {
             accounts.addAll(bunqService.getAccounts(currentUser));
         }
         if(currentUser.getEthereumAddress() != null && !currentUser.getEthereumAddress().isEmpty()) {

@@ -48,6 +48,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <dd>{{user.role}}</dd>
                                 <dt hidden$="[[!user.bunqKey]]">Bunq API key</dt>
                                 <dd hidden$="[[!user.bunqKey]]">{{user.bunqKey}} <paper-icon-button icon="icons:delete" on-tap="_deleteBunq"></paper-icon-button></dd>
+                                <dt hidden$="[[!user.bunqToken]]">Bunq access token</dt>
+                                <dd hidden$="[[!user.bunqToken]]">{{user.bunqToken.accessToken}} <paper-icon-button icon="icons:delete" on-tap="_deleteBunq"></paper-icon-button></dd>
                                 <dt hidden$="[[!user.rabobankToken]]">Rabobank access token</dt>
                                 <dd hidden$="[[!user.rabobankToken]]">{{user.rabobankToken.accessToken}} <paper-icon-button icon="icons:delete" on-tap="_deleteRabobank"></paper-icon-button></dd>
                                 <dt hidden$="[[!user.ethereumAddress]]">Ethereum address</dt>

@@ -4,6 +4,7 @@ import com.example.lavaeolus.controller.domain.Account;
 import com.example.lavaeolus.database.domain.User;
 import com.example.lavaeolus.security.TokenUserDetailsService;
 import com.example.lavaeolus.service.INGService;
+import com.example.lavaeolus.service.BunqService;
 import com.example.lavaeolus.service.RabobankService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,9 @@ public class UserController extends AbstractController {
 
     @Autowired
     private RabobankService rabobankService;
+
+    @Autowired
+    private BunqService bunqService;
 
     @Autowired
     private INGService ingService;
@@ -84,6 +88,9 @@ public class UserController extends AbstractController {
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else if(Account.AccountType.ing.equals(type)) {
             headers.add("redirect", ingService.redirect(getCurrentUser().getUsername()));
+            return new ResponseEntity<>(headers, HttpStatus.OK);
+        } else if(Account.AccountType.bunq.equals(type)) {
+            headers.add("redirect", bunqService.redirect(getCurrentUser().getUsername()));
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else {
             headers.setAll(tokenUserDetailsService.createTokenHeader(user));
