@@ -87,8 +87,7 @@ public class INGClient {
         } catch (HttpClientErrorException e) {
             LOG.error("Did not receive a correct response: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
             return null;
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
             LOG.error("An error occurred mapping the JSON response to an AccessTokenResponse: ", e);
             return null;
         }
@@ -131,20 +130,22 @@ public class INGClient {
 
     private HttpHeaders createHeaders(String path, String method, String body) {
         LOG.debug("Creating headers for message: {} {} {}", path, method, body);
+
         String reqId = "someid";
         String date = getServerTime();
         String digest = "SHA-256=" + new String(Base64.getEncoder().encode(DigestUtils.sha256(body)));
-        String signature = "(request-target): " + method + " " + path + "\n" +
+        String stringToSign = "(request-target): " + method + " " + path + "\n" +
                 "date: " + date + "\n" +
                 "digest: " + digest + "\n" +
                 "x-ing-reqid: " + reqId;
+        String signature = "keyId=\"" + clientId + "\",algorithm=\"rsa-sha256\",headers=\"(request-target) date digest x-ing-reqid\",signature=\"" + signBase64(stringToSign) + "\"";
 
         HttpHeaders headers = new HttpHeaders();
         if(accessToken != null) {
             headers.set("Authorization", "Bearer " + accessToken.getAccessToken());
-            headers.set("Signature", "keyId=\"" + clientId + "\",algorithm=\"rsa-sha256\",headers=\"(request-target) date digest x-ing-reqid\",signature=\"" + signBase64(signature) + "\"");
+            headers.set("Signature", signature);
         } else {
-            headers.set("Authorization", "Signature keyId=\"" + clientId + "\",algorithm=\"rsa-sha256\",headers=\"(request-target) date digest x-ing-reqid\",signature=\"" + signBase64(signature) + "\"");
+            headers.set("Authorization", "Signature " + signature);
         }
         headers.set("X-ING-ReqID", reqId);
         headers.set("Date", date);
