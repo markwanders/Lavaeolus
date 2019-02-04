@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 import java.io.*;
 
@@ -22,14 +21,14 @@ public class INGAccessTokenHolder {
     @Bean
     public AccessTokenResponse ingAccessToken() throws IOException {
         AccessTokenResponse ingAccessToken;
-        String fileLocation = "classpath:ing_access_token.json";
+        String fileLocation = "/ing_access_token.json";
+        File file = new File(getClass().getResource(".").getFile() + fileLocation);
         try {
-            File file = ResourceUtils.getFile(fileLocation);
             ingAccessToken = readTokenFromFile(file);
             //TODO: check if expired
         } catch(FileNotFoundException fileNotFoundException) {
             ingAccessToken = ingClient.registerApplication();
-            writeTokenToFile(new File(fileLocation), ingAccessToken);
+            writeTokenToFile(file, ingAccessToken);
         }
         return ingAccessToken;
     }
@@ -50,6 +49,11 @@ public class INGAccessTokenHolder {
 
         AccessTokenResponse ingAccessToken = objectMapper.readValue(in, AccessTokenResponse.class);
         LOG.info("Read INGAccessToken from file: {}", ingAccessToken);
+
+        if(ingAccessToken == null) {
+            throw new FileNotFoundException();
+        }
+
         return ingAccessToken;
     }
 }
