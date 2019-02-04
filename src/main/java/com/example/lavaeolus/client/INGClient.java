@@ -21,10 +21,7 @@ import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 
 @Component
@@ -131,7 +128,7 @@ public class INGClient {
     private HttpHeaders createHeaders(String path, String method, String body) {
         LOG.debug("Creating headers for message: {} {} {}", path, method, body);
 
-        String reqId = "someid";
+        String reqId = UUID.randomUUID().toString();
         String date = getServerTime();
         String digest = "SHA-256=" + new String(Base64.getEncoder().encode(DigestUtils.sha256(body)));
         String stringToSign = "(request-target): " + method + " " + path + "\n" +
