@@ -84,6 +84,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                 <paper-input value="{{newKey}}" label="Key"
                                              name="newKey"></paper-input>
                             </template>
+                            <br/>
                             <span class="error-message">[[accountErrorMessage]]</span>
                             <span class="success-message">[[accountSuccessMessage]]</span>
                         </div>
@@ -239,6 +240,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.$.user.generateRequest();
             if(e.detail.xhr.getResponseHeader('redirect') !== null) {
                 window.location.assign(e.detail.xhr.getResponseHeader('redirect'), '_blank')
+            }
+            if(e.detail && e.detail.response && e.detail.response.message) {
+                this.accountSuccessMessage = e.detail.response.message
             }
         }
 

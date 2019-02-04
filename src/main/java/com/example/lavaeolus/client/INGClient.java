@@ -1,9 +1,9 @@
 package com.example.lavaeolus.client;
 
 import com.example.lavaeolus.AccessTokenResponse;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.example.lavaeolus.Greeting;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
+import javax.annotation.PostConstruct;
+import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -24,6 +25,7 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
 
 @Component
 public class INGClient {
@@ -40,10 +42,25 @@ public class INGClient {
     @Autowired
     private Signature signature;
 
+    private File file = new File(getClass().getResource(".").getFile() +  "/ing_access_token.json");
+
     @Value("${ing.client-id}")
     private String clientId;
 
-    public AccessTokenResponse registerApplication() {
+    private AccessTokenResponse accessToken;
+
+    @PostConstruct
+    private void setup() throws IOException {
+        try {
+            this.accessToken = readTokenFromFile();
+            //TODO: check if expired
+        } catch(FileNotFoundException fileNotFoundException) {
+            this.accessToken = getAccessToken();
+            writeTokenToFile(accessToken);
+        }
+    }
+
+    private AccessTokenResponse getAccessToken() {
         String body = "grant_type=client_credentials&scope=greetings%3Aview";
 
         String path = "/oauth2/token";
@@ -51,7 +68,7 @@ public class INGClient {
 
         LOG.info("Sending request to {}", requestURL);
         try {
-            HttpHeaders headers = createHeaders(body, path, "post");
+            HttpHeaders headers = createHeaders(path, "post", body);
 
             HttpEntity request = new HttpEntity<>(body, headers);
 
@@ -67,8 +84,7 @@ public class INGClient {
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                     .readValue(responseEntity.getBody(), AccessTokenResponse.class);
-        } catch (
-                HttpClientErrorException e) {
+        } catch (HttpClientErrorException e) {
             LOG.error("Did not receive a correct response: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
             return null;
         } catch (
@@ -78,12 +94,43 @@ public class INGClient {
         }
     }
 
-    public String getAuthorizationServerUrl() {
-        return "";
+    public Greeting viewGreeting() {
+        String path = "/greetings/single";
+        String requestURL = ING_URL + path;
+
+        LOG.info("Sending request to {}", requestURL);
+        try {
+            HttpHeaders headers = createHeaders(path, "get", "");
+
+            HttpEntity request = new HttpEntity<>(headers);
+
+            ResponseEntity<String> responseEntity = mutualTLSRestTemplate.exchange(
+                    requestURL,
+                    HttpMethod.GET,
+                    request,
+                    String.class);
+
+            LOG.info("Received response: {}", responseEntity);
+
+            return new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                    .readValue(responseEntity.getBody(), Greeting.class);
+        } catch (HttpClientErrorException e) {
+            LOG.error("Did not receive a correct response: {} {}", e.getStatusCode(), e.getResponseBodyAsString());
+            if(e.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+                deleteToken();
+                this.accessToken = getAccessToken();
+            }
+            return null;
+        } catch (IOException e) {
+            LOG.error("An error occurred mapping the JSON response to an AccessTokenResponse: ", e);
+            return null;
+        }
     }
 
-    private HttpHeaders createHeaders(String body, String path, String method) {
-        LOG.debug("Creating headers for message: {}", body);
+    private HttpHeaders createHeaders(String path, String method, String body) {
+        LOG.debug("Creating headers for message: {} {} {}", path, method, body);
         String reqId = "someid";
         String date = getServerTime();
         String digest = "SHA-256=" + new String(Base64.getEncoder().encode(DigestUtils.sha256(body)));
@@ -93,7 +140,12 @@ public class INGClient {
                 "x-ing-reqid: " + reqId;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Signature keyId=\"" + clientId + "\",algorithm=\"rsa-sha256\",headers=\"(request-target) date digest x-ing-reqid\",signature=\"" + signBase64(signature) + "\"");
+        if(accessToken != null) {
+            headers.set("Authorization", "Bearer " + accessToken.getAccessToken());
+            headers.set("Signature", "keyId=\"" + clientId + "\",algorithm=\"rsa-sha256\",headers=\"(request-target) date digest x-ing-reqid\",signature=\"" + signBase64(signature) + "\"");
+        } else {
+            headers.set("Authorization", "Signature keyId=\"" + clientId + "\",algorithm=\"rsa-sha256\",headers=\"(request-target) date digest x-ing-reqid\",signature=\"" + signBase64(signature) + "\"");
+        }
         headers.set("X-ING-ReqID", reqId);
         headers.set("Date", date);
         headers.set("Digest", digest);
@@ -123,5 +175,34 @@ public class INGClient {
                 "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(calendar.getTime());
+    }
+
+    private void writeTokenToFile(AccessTokenResponse accessTokenResponse) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+        writer.writeValue(file, accessTokenResponse);
+    }
+
+    private void deleteToken() {
+        this.accessToken = null;
+        file.delete();
+    }
+
+    private AccessTokenResponse readTokenFromFile() throws IOException {
+        InputStream in = new FileInputStream(file);
+
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+
+        AccessTokenResponse ingAccessToken = objectMapper.readValue(in, AccessTokenResponse.class);
+        LOG.info("Read INGAccessToken from file: {}", ingAccessToken);
+
+        if(ingAccessToken == null) {
+            throw new FileNotFoundException();
+        }
+
+        return ingAccessToken;
     }
 }

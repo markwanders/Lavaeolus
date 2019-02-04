@@ -87,8 +87,7 @@ public class UserController extends AbstractController {
             headers.add("redirect", rabobankService.redirect(getCurrentUser().getUsername()));
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else if(Account.AccountType.ing.equals(type)) {
-            headers.add("redirect", ingService.redirect(getCurrentUser().getUsername()));
-            return new ResponseEntity<>(headers, HttpStatus.OK);
+            return new ResponseEntity<>(ingService.showcase(), HttpStatus.OK);
         } else if(Account.AccountType.bunq.equals(type)) {
             headers.add("redirect", bunqService.redirect(getCurrentUser().getUsername()));
             return new ResponseEntity<>(headers, HttpStatus.OK);
